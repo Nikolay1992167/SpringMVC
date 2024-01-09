@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/create_houses_table.sql
+  - include:
+      file: db/changelog/create_persons_table.sql
+  - include:
+      file: db/changelog/create_houses_persons_fk_table.sql

@@ -2,6 +2,7 @@ package by.clevertec.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import liquibase.integration.spring.SpringLiquibase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -17,6 +18,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.sql.DataSource;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -134,5 +136,13 @@ public class DatabaseConfig {
         hibernateProperties.setProperty("hibernate.show_sql", showSql);
         hibernateProperties.setProperty("hibernate.format_sql", formatSql);
         return hibernateProperties;
+    }
+
+    @Bean
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("classpath:db.changelog/db.changelog-master.yml");
+        return liquibase;
     }
 }
