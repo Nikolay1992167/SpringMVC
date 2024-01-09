@@ -19,7 +19,7 @@ public interface CrudDao <T, V>{
      *
      * @return all found entities or empty list
      */
-    List<T> findAll();
+    List<T> findAll(int pageNumber, int pageSize);
 
     /**
      * Save an entity in repository
@@ -42,5 +42,5 @@ public interface CrudDao <T, V>{
      *
      * @param id entity ID
      */
-    void delete(V id);
+    Optional<T> delete(V id);
 }
