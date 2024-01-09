@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id "io.freefair.lombok" version "8.4"
+    id 'war'
 }
 
 group = 'by.clevertec'
@@ -10,6 +12,25 @@ repositories {
 }
 
 dependencies {
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
+
+    implementation 'org.springframework:spring-orm:6.1.2'
+    implementation 'org.springframework:spring-webmvc:6.1.2'
+
+    implementation 'org.hibernate.orm:hibernate-core:6.4.1.Final'
+
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    implementation 'org.postgresql:postgresql:42.6.0'
+
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
