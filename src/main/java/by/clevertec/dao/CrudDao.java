@@ -5,7 +5,6 @@ import java.util.Optional;
 
 public interface CrudDao <T, V>{
 
-
     /**
      * Find entity in repository
      *

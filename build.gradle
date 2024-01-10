@@ -13,6 +13,9 @@ repositories {
 
 dependencies {
 
+    implementation 'org.slf4j:slf4j-api:2.0.11'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.11'
+
     implementation 'org.liquibase:liquibase-core:4.25.1'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
@@ -25,8 +28,8 @@ dependencies {
 
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 
     implementation 'org.postgresql:postgresql:42.6.0'
 

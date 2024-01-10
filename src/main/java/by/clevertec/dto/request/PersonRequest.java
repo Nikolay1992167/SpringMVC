@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PersonRequest {
 
+    private String id;
     private String name;
     private String surname;
     private Sex sex;

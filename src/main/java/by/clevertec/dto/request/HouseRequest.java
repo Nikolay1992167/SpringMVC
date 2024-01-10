@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class HouseRequest {
 
+    private String id;
     private String area;
     private String country;
     private String city;
