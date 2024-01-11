@@ -14,6 +14,6 @@ public interface PersonMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "createDate", ignore = true)
-    @Mapping(target = "lastUpdateDate", ignore = true)
+    @Mapping(target = "updateDate", ignore = true)
     Person toPerson(PersonRequest personRequest);
 }

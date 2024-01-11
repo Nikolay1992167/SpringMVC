@@ -13,6 +13,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -24,11 +25,11 @@ public class HouseServiceImpl implements HouseService {
     private final HouseMapper houseMapper = Mappers.getMapper(HouseMapper.class);
 
     @Override
-    public HouseResponse findById(Long id) {
-        HouseResponse houseResponse = houseDao.findById(id)
+    public HouseResponse findById(UUID uuid) {
+        HouseResponse houseResponse = houseDao.findById(uuid)
                 .map(houseMapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("House with ID " + id + " does not found!"));
-        log.info("House findById {}", houseResponse);
+                .orElseThrow(() -> NotFoundException.of(House.class, uuid));
+        log.info("House method findById {}", houseResponse);
         return houseResponse;
     }
 
@@ -38,7 +39,7 @@ public class HouseServiceImpl implements HouseService {
                 .stream()
                 .map(houseMapper::toResponse)
                 .toList();
-        log.info("House findAll {}", houses.size());
+        log.info("House method findAll {}", houses.size());
         return houses;
     }
 
@@ -47,38 +48,28 @@ public class HouseServiceImpl implements HouseService {
         House houseToSave = houseMapper.toHouse(houseRequest);
         House saved = houseDao.save(houseToSave);
         HouseResponse response = houseMapper.toResponse(saved);
-        log.info("House save {}", response);
+        log.info("House method save {}", response);
         return  response;
     }
 
     @Override
-    public HouseResponse update(HouseRequest houseRequest) {
+    public HouseResponse update(UUID uuid, HouseRequest houseRequest) {
         House houseToUpdate = houseMapper.toHouse(houseRequest);
-        House houseById = houseDao.findById(houseToUpdate.getId())
-                .orElseThrow(() -> new NotFoundException("House with ID " + houseToUpdate.getId() + " does not found!"));
-        houseToUpdate.setUuid(houseById.getUuid());
+        House houseById = houseDao.findById(uuid)
+                .orElseThrow(() -> NotFoundException.of(House.class, uuid));
+        houseToUpdate.setId(houseById.getId());
+        houseToUpdate.setUuid(uuid);
         houseToUpdate.setCreateDate(houseById.getCreateDate());
-        checkFieldWhenNull(houseToUpdate, houseById);
         House updated = houseDao.update(houseToUpdate);
         HouseResponse response = houseMapper.toResponse(updated);
-        log.info("House update {}", response);
+        log.info("House method update {}", response);
         return response;
     }
 
     @Override
-    public void delete(Long id) {
-        House house = houseDao.delete(id)
-                .orElseThrow(() -> new NotFoundException("There is no House with ID " + id + " to delete"));
-        log.info("House delete {}", house);
-    }
-
-    private void checkFieldWhenNull(House expectedHouse, House actualHouse){
-        expectedHouse.setArea(expectedHouse.getArea() != null ? expectedHouse.getArea() : actualHouse.getArea());
-        expectedHouse.setCountry(expectedHouse.getCountry() != null ? expectedHouse.getArea() : actualHouse.getCountry());
-        expectedHouse.setCity(expectedHouse.getCity() != null ? expectedHouse.getCity() : actualHouse.getCity());
-        expectedHouse.setStreet(expectedHouse.getStreet() != null ? expectedHouse.getStreet() : actualHouse.getStreet());
-        expectedHouse.setNumber(expectedHouse.getNumber() != null ? expectedHouse.getNumber() : actualHouse.getNumber());
-        expectedHouse.setResidents(!expectedHouse.getResidents().isEmpty() ? expectedHouse.getResidents() : actualHouse.getResidents());
-        expectedHouse.setOwners(!expectedHouse.getOwners().isEmpty() ? expectedHouse.getOwners() : actualHouse.getOwners());
+    public void delete(UUID uuid) {
+        House house = houseDao.delete(uuid)
+                .orElseThrow(() -> NotFoundException.of(House.class, uuid));
+        log.info("House method delete {}", house);
     }
 }

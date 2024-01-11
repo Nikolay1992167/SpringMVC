@@ -8,5 +8,5 @@ spring:
   hibernate:
     ddl: none
     dialect: org.hibernate.dialect.PostgreSQLDialect
-    showSql: true
-    formatSql: true
+    show_Sql: true
+    format_Sql: true

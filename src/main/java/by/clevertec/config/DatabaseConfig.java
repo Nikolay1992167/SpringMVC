@@ -41,38 +41,8 @@ public class DatabaseConfig {
     @Value("${spring.datasource.password}")
     private String password;
 
-    @Value("#{T(java.lang.Integer).parseInt('${spring.datasource.poolSize}')}")
-    private Integer poolSize;
-
-    @Value("${spring.hibernate.ddl}")
-    private String ddl;
-
-    @Value("${spring.hibernate.dialect}")
-    private String dialect;
-
-    @Value("${spring.hibernate.show_sql}")
-    private String showSql;
-
-    @Value("${spring.hibernate.format_sql}")
-    private String formatSql;
-
-    /**
-     * Creates a new instance of the {@link BeanFactoryPostProcessor} interface, which allows for custom modification of an application context's bean definitions.
-     * The method creates a new {@link PropertySourcesPlaceholderConfigurer} object, which is used to replace ${...} placeholders with properties from a {@link Properties} instance.
-     * Then it creates a new {@link YamlPropertiesFactoryBean} object and sets the 'application.yml' file as its resource. The {@link YamlPropertiesFactoryBean} object is used to load YAML (`.yml`) files and convert them into a {@link Properties} object.
-     * The method then retrieves the {@link Properties} object from the {@link YamlPropertiesFactoryBean} object and sets it on the {@link PropertySourcesPlaceholderConfigurer} object.
-     *
-     * @return the new {@link PropertySourcesPlaceholderConfigurer} object is returned to be used as a {@link BeanFactoryPostProcessor} for the Spring application context.
-     */
-    @Bean
-    public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
-        PropertySourcesPlaceholderConfigurer configure = new PropertySourcesPlaceholderConfigurer();
-        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
-        yaml.setResources(new ClassPathResource("application.yml"));
-        Properties yamlObject = Objects.requireNonNull(yaml.getObject(), "Yaml not found.");
-        configure.setProperties(yamlObject);
-        return configure;
-    }
+    @Value("${spring.datasource.poolSize}")
+    private int poolSize;
 
     /**
      * Creates a new instance of the {@link HikariDataSource} class, which provides a connection pool for the database.
@@ -84,6 +54,7 @@ public class DatabaseConfig {
      */
     @Bean
     public HikariDataSource hikariDataSource() {
+
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(driver);
         hikariConfig.setJdbcUrl(url);
@@ -91,58 +62,5 @@ public class DatabaseConfig {
         hikariConfig.setPassword(password);
         hikariConfig.setMaximumPoolSize(poolSize);
         return new HikariDataSource(hikariConfig);
-    }
-
-    /**
-     * Creates a new instance of the {@link LocalSessionFactoryBean} class. The method sets the data source to be
-     * used by the SessionFactory object by calling the {@link HikariDataSource} bean.
-     * It also specifies the package where the Hibernate entities are located using the setPackagesToScan() method.
-     * Then it sets the Hibernate properties using the {@link #hibernateProperties()} method.
-     *
-     * @return a LocalSessionFactoryBean object configured with the data source and Hibernate properties.
-     */
-    @Bean
-    public LocalSessionFactoryBean sessionFactory(HikariDataSource hikariDataSource) {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(hikariDataSource);
-        sessionFactory.setPackagesToScan("ru.clevertec.ecl.giftcertificates");
-        sessionFactory.setHibernateProperties(hibernateProperties());
-        return sessionFactory;
-    }
-
-    /**
-     * Creates a new instance of the {@link HibernateTransactionManager} class. The method sets
-     * the {@link org.hibernate.SessionFactory} object to be used by the transaction manager by calling the getObject()
-     * method on the {@link LocalSessionFactoryBean} returned by the LocalSessionFactoryBean.
-     *
-     * @return a {@link PlatformTransactionManager} object configured with the SessionFactory object.
-     */
-    @Bean
-    public PlatformTransactionManager hibernateTransactionManager(LocalSessionFactoryBean sessionFactory) {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory.getObject());
-        return transactionManager;
-    }
-
-    /**
-     * Create a new instance of the {@link Properties} class. The method sets necessary properties for Hibernate.
-     *
-     * @return a {@link Properties} object containing the Hibernate properties.
-     */
-    private Properties hibernateProperties() {
-        Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", ddl);
-        hibernateProperties.setProperty("hibernate.dialect", dialect);
-        hibernateProperties.setProperty("hibernate.show_sql", showSql);
-        hibernateProperties.setProperty("hibernate.format_sql", formatSql);
-        return hibernateProperties;
-    }
-
-    @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("classpath:db.changelog/db.changelog-master.yml");
-        return liquibase;
     }
 }

@@ -28,15 +28,9 @@ public class PersonResponse {
     private Passport passport;
     private House house;
 
-    @JsonProperty("create_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS")
     private LocalDateTime createDate;
 
-    @JsonProperty("update_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS")
     private LocalDateTime updateDate;
-
-    @Builder.Default
-    private List<House> ownedHouse = new ArrayList<>();
-
 }

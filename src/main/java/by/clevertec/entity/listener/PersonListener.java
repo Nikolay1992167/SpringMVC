@@ -10,7 +10,7 @@ import java.util.UUID;
 public class PersonListener {
 
     @PrePersist
-    public void prePersist(Person person){
+    public void prePersist(Person person) {
         LocalDateTime now = LocalDateTime.now();
         person.setCreateDate(now);
         person.setUpdateDate(now);
@@ -18,7 +18,7 @@ public class PersonListener {
     }
 
     @PreUpdate
-    public void preUpdate(Person person){
+    public void preUpdate(Person person) {
         person.setUpdateDate(LocalDateTime.now());
     }
 }
