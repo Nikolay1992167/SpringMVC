@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,48 +27,59 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseResponse findById(UUID uuid) {
+
         HouseResponse houseResponse = houseDao.findById(uuid)
                 .map(houseMapper::toResponse)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
         log.info("House method findById {}", houseResponse);
+
         return houseResponse;
     }
 
     @Override
     public List<HouseResponse> findAll(int pageNumber, int pageSize) {
+
         List<HouseResponse> houses = houseDao.findAll(pageNumber, pageSize)
                 .stream()
                 .map(houseMapper::toResponse)
                 .toList();
         log.info("House method findAll {}", houses.size());
-        return houses;
+
+        return new ArrayList<>(houses);
     }
 
     @Override
     public HouseResponse save(HouseRequest houseRequest) {
+
         House houseToSave = houseMapper.toHouse(houseRequest);
         House saved = houseDao.save(houseToSave);
         HouseResponse response = houseMapper.toResponse(saved);
         log.info("House method save {}", response);
-        return  response;
+
+        return response;
     }
 
     @Override
     public HouseResponse update(UUID uuid, HouseRequest houseRequest) {
+
         House houseToUpdate = houseMapper.toHouse(houseRequest);
-        House houseById = houseDao.findById(uuid)
+        House houseInDB = houseDao.findById(uuid)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
-        houseToUpdate.setId(houseById.getId());
+
+        houseToUpdate.setId(houseInDB.getId());
         houseToUpdate.setUuid(uuid);
-        houseToUpdate.setCreateDate(houseById.getCreateDate());
+        houseToUpdate.setCreateDate(houseInDB.getCreateDate());
+
         House updated = houseDao.update(houseToUpdate);
         HouseResponse response = houseMapper.toResponse(updated);
         log.info("House method update {}", response);
+
         return response;
     }
 
     @Override
     public void delete(UUID uuid) {
+
         House house = houseDao.delete(uuid)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
         log.info("House method delete {}", house);

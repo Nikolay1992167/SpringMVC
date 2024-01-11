@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,31 +27,61 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonResponse findById(UUID uuid){
+
         PersonResponse personResponse = personDao.findById(uuid)
                 .map(personMapper::toResponse)
                 .orElseThrow(()-> NotFoundException.of(Person.class, uuid));
         log.info("House method finById {}", personResponse);
+
         return personResponse;
     }
 
     @Override
     public List<PersonResponse> findAll(int pageNumber, int pageSize) {
 
-        return null;
+        List<PersonResponse> persons = personDao.findAll(pageNumber, pageSize)
+                .stream()
+                .map(personMapper::toResponse)
+                .toList();
+        log.info("Person method findAll {}", persons.size());
+
+        return new ArrayList<>(persons);
     }
 
     @Override
     public PersonResponse save(PersonRequest personRequest) {
-        return null;
+
+        Person personToSave = personMapper.toPerson(personRequest);
+        Person saved = personDao.save(personToSave);
+        PersonResponse response = personMapper.toResponse(saved);
+        log.info("Person method save {}", response);
+
+        return response;
     }
 
     @Override
     public PersonResponse update(UUID uuid, PersonRequest personRequest) {
-        return null;
+
+        Person personToUpdate = personMapper.toPerson(personRequest);
+        Person personInDB = personDao.findById(uuid)
+                .orElseThrow(()->NotFoundException.of(Person.class, uuid));
+
+        personToUpdate.setId(personInDB.getId());
+        personToUpdate.setUuid(uuid);
+        personToUpdate.setCreateDate(personInDB.getCreateDate());
+
+        Person updated = personDao.update(personToUpdate);
+        PersonResponse response = personMapper.toResponse(updated);
+        log.info("Person method update {}", response);
+
+        return response;
     }
 
     @Override
     public void delete(UUID uuid) {
 
+        Person person = personDao.delete(uuid)
+                .orElseThrow(()->NotFoundException.of(Person.class, uuid));
+        log.info("Person method delete {}", person);
     }
 }
