@@ -1,8 +1,10 @@
 package ru.clevertec.house.service.impl;
 
+import ru.clevertec.house.dao.HouseDao;
 import ru.clevertec.house.dao.PersonDao;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
+import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -22,6 +25,8 @@ import java.util.UUID;
 public class PersonServiceImpl implements PersonService {
 
     private final PersonDao personDao;
+
+    private final HouseDao houseDao;
 
     private final PersonMapper personMapper = Mappers.getMapper(PersonMapper.class);
 
@@ -51,7 +56,10 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonResponse save(PersonRequest personRequest) {
 
+        House house = getHouse(personRequest);
+
         Person personToSave = personMapper.toPerson(personRequest);
+        personToSave.setHouse(house);
         Person saved = personDao.save(personToSave);
         PersonResponse response = personMapper.toResponse(saved);
         log.info("Person method save {}", response);
@@ -62,12 +70,16 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonResponse update(UUID uuid, PersonRequest personRequest) {
 
+        House house = getHouse(personRequest);
+
         Person personToUpdate = personMapper.toPerson(personRequest);
+
         Person personInDB = personDao.findById(uuid)
                 .orElseThrow(()->NotFoundException.of(Person.class, uuid));
 
         personToUpdate.setId(personInDB.getId());
         personToUpdate.setUuid(uuid);
+        personToUpdate.setHouse(house);
         personToUpdate.setCreateDate(personInDB.getCreateDate());
 
         Person updated = personDao.update(personToUpdate);
@@ -83,5 +95,9 @@ public class PersonServiceImpl implements PersonService {
         Person person = personDao.delete(uuid)
                 .orElseThrow(()->NotFoundException.of(Person.class, uuid));
         log.info("Person method delete {}", person);
+    }
+
+    private House getHouse(PersonRequest personRequest) {
+        return houseDao.findById(personRequest.getHouseUUID()).get();
     }
 }

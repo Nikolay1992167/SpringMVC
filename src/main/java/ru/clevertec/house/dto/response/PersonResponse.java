@@ -23,7 +23,7 @@ public class PersonResponse {
     private String surname;
     private Sex sex;
     private Passport passport;
-    private House house;
+    private UUID houseUUID;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS")
     private LocalDateTime createDate;

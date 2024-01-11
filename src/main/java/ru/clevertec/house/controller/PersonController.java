@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/houses")
+@RequestMapping("/persons")
 public class PersonController {
 
     private final PersonService personService;
@@ -32,7 +32,7 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonResponse>> findAll(@RequestParam(defaultValue = "0") int pageNumber,
+    public ResponseEntity<List<PersonResponse>> findAll(@RequestParam(defaultValue = "1") int pageNumber,
                                                         @RequestParam(defaultValue = "15") int pageSize) {
         return ResponseEntity.ok(personService.findAll(pageNumber, pageSize));
     }

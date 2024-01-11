@@ -32,7 +32,7 @@ public class HouseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<HouseResponse>> findAll(@RequestParam(defaultValue = "0") int pageNumber,
+    public ResponseEntity<List<HouseResponse>> findAll(@RequestParam(defaultValue = "1") int pageNumber,
                                                        @RequestParam(defaultValue = "15") int pageSize) {
         return ResponseEntity.ok(houseService.findAll(pageNumber, pageSize));
     }

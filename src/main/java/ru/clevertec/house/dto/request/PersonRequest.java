@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -36,7 +37,7 @@ public class PersonRequest {
     private Passport passport;
 
     @NotNull
-    private House house;
+    private UUID houseUUID;
 
     @Valid
     @Builder.Default
