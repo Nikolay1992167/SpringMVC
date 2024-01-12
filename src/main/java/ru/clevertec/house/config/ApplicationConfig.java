@@ -27,10 +27,10 @@ public class ApplicationConfig {
      */
     @Bean
     public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
-
+        String activeProfile = System.getProperty("spring.profiles.active");
         PropertySourcesPlaceholderConfigurer configure = new PropertySourcesPlaceholderConfigurer();
         YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
-        yaml.setResources(new ClassPathResource("application.yml"));
+        yaml.setResources(new ClassPathResource("application-" + activeProfile + ".yml"));
         Properties yamlObject = Objects.requireNonNull(yaml.getObject(), "Yaml not found.");
         configure.setProperties(yamlObject);
         return configure;
