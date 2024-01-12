@@ -27,8 +27,8 @@ public class PersonRowMapper implements RowMapper<Person> {
         Passport passport = new Passport();
         passport.setSeries(rs.getString("passport_series"));
         passport.setNumber(rs.getString("passport_number"));
-
         person.setPassport(passport);
+
         person.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime());
         person.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime());
 

@@ -10,5 +10,9 @@ public interface JdbcService {
 
     List<PersonResponse> findPersonWhichLiveInHouse(UUID houseId);
 
+    List<PersonResponse> findPersonsFullTextSearch(String searchTerm);
+
     List<HouseResponse> findHousesWhichOwnPerson(UUID personId);
+
+    List<HouseResponse> findHousesFullTextSearch(String searchTerm);
 }

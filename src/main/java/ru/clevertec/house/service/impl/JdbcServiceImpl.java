@@ -40,6 +40,18 @@ public class JdbcServiceImpl implements JdbcService {
     }
 
     @Override
+    public List<PersonResponse> findPersonsFullTextSearch(String searchTerm) {
+
+        List<PersonResponse> persons = getDao.findPersonsFullTextSearch(searchTerm)
+                .stream()
+                .map(personMapper::toResponse)
+                .toList();
+        log.info("Request completed findPersonsFullTextSearch, found: {}", persons.size());
+
+        return new ArrayList<>(persons);
+    }
+
+    @Override
     public List<HouseResponse> findHousesWhichOwnPerson(UUID personId) {
 
         List<HouseResponse> houses = getDao.findHousesWhichOwnPerson(personId)
@@ -47,6 +59,18 @@ public class JdbcServiceImpl implements JdbcService {
                 .map(houseMapper::toResponse)
                 .toList();
         log.info("Request completed findHousesWhichOwnPerson, found: {}", houses.size());
+
+        return new ArrayList<>(houses);
+    }
+
+    @Override
+    public List<HouseResponse> findHousesFullTextSearch(String searchTerm) {
+
+        List<HouseResponse> houses = getDao.findHousesFullTextSearch(searchTerm)
+                .stream()
+                .map(houseMapper::toResponse)
+                .toList();
+        log.info("Request completed findHousesFullTextSearch, found: {}", houses.size());
 
         return new ArrayList<>(houses);
     }

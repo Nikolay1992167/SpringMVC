@@ -48,6 +48,12 @@ public class HouseController {
         return ResponseEntity.ok(jdbcService.findHousesWhichOwnPerson(uuid));
     }
 
+    @GetMapping("/fullsearch/{searchterm}")
+    public ResponseEntity<List<HouseResponse>> findHousesFullTextSearch(@PathVariable String searchterm){
+
+        return ResponseEntity.ok(jdbcService.findHousesFullTextSearch(searchterm));
+    }
+
     @PostMapping
     public ResponseEntity<HouseResponse> save(@RequestBody HouseRequest houseRequest) {
 
