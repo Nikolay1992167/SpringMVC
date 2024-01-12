@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
+import ru.clevertec.house.service.JdbcService;
 import ru.clevertec.house.service.PersonService;
 
 import java.util.List;
@@ -26,19 +27,30 @@ public class PersonController {
 
     private final PersonService personService;
 
+    private final JdbcService jdbcService;
+
     @GetMapping("/{uuid}")
     public ResponseEntity<PersonResponse> findById(@PathVariable UUID uuid) {
+
         return ResponseEntity.ok(personService.findById(uuid));
     }
 
     @GetMapping
     public ResponseEntity<List<PersonResponse>> findAll(@RequestParam(defaultValue = "1") int pageNumber,
                                                         @RequestParam(defaultValue = "15") int pageSize) {
+
         return ResponseEntity.ok(personService.findAll(pageNumber, pageSize));
+    }
+
+    @GetMapping("/lives/{uuid}")
+    public ResponseEntity<List<PersonResponse>> findPersonWhichLiveInHouse(@PathVariable UUID uuid){
+
+        return ResponseEntity.ok(jdbcService.findPersonWhichLiveInHouse(uuid));
     }
 
     @PostMapping
     public ResponseEntity<PersonResponse> save(@RequestBody PersonRequest personRequest) {
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(personService.save(personRequest));
     }
@@ -46,11 +58,13 @@ public class PersonController {
     @PutMapping("/{uuid}")
     public ResponseEntity<PersonResponse> update(@PathVariable UUID uuid,
                                                  @RequestBody PersonRequest personRequest) {
+
         return ResponseEntity.ok(personService.update(uuid, personRequest));
     }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void>  delete(@PathVariable UUID uuid) {
+
         personService.delete(uuid);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

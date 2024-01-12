@@ -103,9 +103,4 @@ public class HouseDaoImpl implements HouseDao {
             return house;
         }
     }
-
-    @Override
-    public List<House> findAllHouseWhenOwnPerson(UUID personId) {
-        return null;
-    }
 }

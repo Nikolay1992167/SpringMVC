@@ -7,5 +7,4 @@ import java.util.UUID;
 
 public interface PersonDao extends CrudDao<Person, UUID>{
 
-    List<Person> findAllPersonWhenLiveInHouse(UUID houseId);
 }

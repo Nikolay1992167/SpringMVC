@@ -101,9 +101,4 @@ public class PersonDaoImpl implements PersonDao {
             return person;
         }
     }
-
-    @Override
-    public List<Person> findAllPersonWhenLiveInHouse(UUID uuid) {
-        return null;
-    }
 }
