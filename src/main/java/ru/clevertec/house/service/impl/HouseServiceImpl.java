@@ -1,5 +1,9 @@
 package ru.clevertec.house.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.clevertec.house.dao.HouseDao;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
@@ -7,10 +11,6 @@ import ru.clevertec.house.entity.House;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
 import ru.clevertec.house.service.HouseService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,13 @@ public class HouseServiceImpl implements HouseService {
 
     private final HouseMapper houseMapper = Mappers.getMapper(HouseMapper.class);
 
+    /**
+     * Finds one {@link HouseResponse} by UUID.
+     *
+     * @param uuid the field uuid of the {@link House}.
+     * @return HouseResponse with the specified UUID and mapped from House entity.
+     * @throws NotFoundException if House is not exists by finding it by UUID.
+     */
     @Override
     public HouseResponse findById(UUID uuid) {
 
@@ -36,6 +43,11 @@ public class HouseServiceImpl implements HouseService {
         return houseResponse;
     }
 
+    /**
+     * Finds all {@link HouseResponse}.
+     *
+     * @return mapped from entity to dto list of all HouseResponse.
+     */
     @Override
     public List<HouseResponse> findAll(int pageNumber, int pageSize) {
 
@@ -48,6 +60,13 @@ public class HouseServiceImpl implements HouseService {
         return new ArrayList<>(houses);
     }
 
+    /**
+     * Saves one {@link House}.
+     *
+     * @param houseRequest the {@link HouseRequest} which will be mapped to House
+     *                     and saved in database by dao.
+     * @return the saved {@link HouseResponse} which was mapped from House entity.
+     */
     @Override
     public HouseResponse save(HouseRequest houseRequest) {
 
@@ -59,6 +78,14 @@ public class HouseServiceImpl implements HouseService {
         return response;
     }
 
+    /**
+     * Updates one {@link House}.
+     *
+     * @param houseRequest the {@link HouseRequest} which will be mapped to House and
+     *                     updated in database by dao.
+     * @return the updated {@link HouseResponse} which was mapped from House entity.
+     * @throws NotFoundException if House is not exists by finding it by UUID.
+     */
     @Override
     public HouseResponse update(UUID uuid, HouseRequest houseRequest) {
 
@@ -77,6 +104,12 @@ public class HouseServiceImpl implements HouseService {
         return response;
     }
 
+    /**
+     * Deletes one {@link House} by UUID.
+     *
+     * @param uuid the field of the House.
+     * @throws NotFoundException if House is not exists by finding it by UUID.
+     */
     @Override
     public void delete(UUID uuid) {
 

@@ -9,5 +9,4 @@ public class IncorrectData {
 
     private String errorMessage;
     private String errorCode;
-
 }

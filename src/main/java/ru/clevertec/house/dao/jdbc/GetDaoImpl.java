@@ -12,6 +12,11 @@ import ru.clevertec.house.entity.Person;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.clevertec.house.dao.util.SQLRequest.SQL_FOR_FIND_HOUSES;
+import static ru.clevertec.house.dao.util.SQLRequest.SQL_FOR_FIND_PERSONS;
+import static ru.clevertec.house.dao.util.SQLRequest.SQL_FOR_FULL_TEXT_SEARCH_HOUSES;
+import static ru.clevertec.house.dao.util.SQLRequest.SQL_FOR_FULL_TEXT_SEARCH_PERSONS;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -22,29 +27,6 @@ public class GetDaoImpl implements GetDao {
     private final PersonRowMapper personRowMapper;
 
     private final HouseRowMapper houseRowMapper;
-
-    private static final String SQL_FOR_FIND_PERSONS = """
-            SELECT * FROM persons 
-            WHERE house_id = (SELECT id FROM houses WHERE uuid = ?)
-            """;
-
-    private static final String SQL_FOR_FULL_TEXT_SEARCH_PERSONS = """            
-            SELECT * FROM persons
-               WHERE CONCAT(name, ' ', surname)
-               LIKE '%' || ? || '%'
-            """;
-
-    private static final String SQL_FOR_FIND_HOUSES = """
-            SELECT * FROM houses h 
-            JOIN houses_persons hp ON h.id = hp.houses_id 
-            JOIN persons p ON hp.persons_id = p.id WHERE p.uuid = ?
-            """;
-
-    private static final String SQL_FOR_FULL_TEXT_SEARCH_HOUSES = """            
-            SELECT * FROM houses
-            WHERE CONCAT(area, ' ', country, ' ', city, ' ', street) 
-            LIKE '%' || ? || '%'
-            """;
 
     @Override
     public List<Person> findPersonsWhichLiveInHouse(UUID houseId) {

@@ -1,14 +1,14 @@
 package ru.clevertec.house.dao.impl;
 
-import ru.clevertec.house.dao.PersonDao;
-import ru.clevertec.house.entity.House;
-import ru.clevertec.house.entity.Person;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+import ru.clevertec.house.dao.PersonDao;
+import ru.clevertec.house.entity.House;
+import ru.clevertec.house.entity.Person;
 
 import java.util.List;
 import java.util.Optional;

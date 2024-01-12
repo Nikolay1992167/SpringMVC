@@ -43,13 +43,13 @@ public class HouseController {
     }
 
     @GetMapping("/owns/{uuid}")
-    public ResponseEntity<List<HouseResponse>> findHousesWhichOwnPerson(@PathVariable UUID uuid){
+    public ResponseEntity<List<HouseResponse>> findHousesWhichOwnPerson(@PathVariable UUID uuid) {
 
         return ResponseEntity.ok(jdbcService.findHousesWhichOwnPerson(uuid));
     }
 
     @GetMapping("/fullsearch/{searchterm}")
-    public ResponseEntity<List<HouseResponse>> findHousesFullTextSearch(@PathVariable String searchterm){
+    public ResponseEntity<List<HouseResponse>> findHousesFullTextSearch(@PathVariable String searchterm) {
 
         return ResponseEntity.ok(jdbcService.findHousesFullTextSearch(searchterm));
     }

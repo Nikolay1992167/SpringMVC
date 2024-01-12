@@ -26,6 +26,13 @@ public class JdbcServiceImpl implements JdbcService {
 
     private final HouseMapper houseMapper = Mappers.getMapper(HouseMapper.class);
 
+    /**
+     * * Finds and returns a list of {@link PersonResponse} objects that represent persons living in a specific house.
+     *
+     * @param houseId the UUID of the house to find persons for.
+     * @return a list of {@link PersonResponse} objects, each representing a person living in the house.
+     * The list is empty if no persons are found.
+     */
     @Override
     public List<PersonResponse> findPersonWhichLiveInHouse(UUID houseId) {
 
@@ -39,6 +46,13 @@ public class JdbcServiceImpl implements JdbcService {
         return new ArrayList<>(persons);
     }
 
+    /**
+     * Performs a full-text search to find persons based on a search term.
+     *
+     * @param searchTerm the term to search for in any text field of the persons.
+     * @return a list of {@link PersonResponse} objects, each representing a person that matches the search term.
+     * The list is empty if no matches are found.
+     */
     @Override
     public List<PersonResponse> findPersonsFullTextSearch(String searchTerm) {
 
@@ -51,6 +65,13 @@ public class JdbcServiceImpl implements JdbcService {
         return new ArrayList<>(persons);
     }
 
+    /**
+     * Finds and returns a list of {@link HouseResponse} objects that represent houses owned by a specific person.
+     *
+     * @param personId the UUID of the person to find houses for.
+     * @return a list of {@link HouseResponse} objects, each representing a house owned by the person.
+     * The list is empty if no houses are found.
+     */
     @Override
     public List<HouseResponse> findHousesWhichOwnPerson(UUID personId) {
 
@@ -63,6 +84,13 @@ public class JdbcServiceImpl implements JdbcService {
         return new ArrayList<>(houses);
     }
 
+    /**
+     * Performs a full-text search to find houses based on a search term.
+     *
+     * @param searchTerm the term to search for in any text field of the houses.
+     * @return a list of {@link HouseResponse} objects, each representing a house that matches the search term.
+     * The list is empty if no matches are found.
+     */
     @Override
     public List<HouseResponse> findHousesFullTextSearch(String searchTerm) {
 

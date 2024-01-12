@@ -43,13 +43,13 @@ public class PersonController {
     }
 
     @GetMapping("/lives/{uuid}")
-    public ResponseEntity<List<PersonResponse>> findPersonWhichLiveInHouse(@PathVariable UUID uuid){
+    public ResponseEntity<List<PersonResponse>> findPersonWhichLiveInHouse(@PathVariable UUID uuid) {
 
         return ResponseEntity.ok(jdbcService.findPersonWhichLiveInHouse(uuid));
     }
 
     @GetMapping("/fullsearch/{searchterm}")
-    public ResponseEntity<List<PersonResponse>> findPersonsFullTextSearch(@PathVariable String searchterm){
+    public ResponseEntity<List<PersonResponse>> findPersonsFullTextSearch(@PathVariable String searchterm) {
 
         return ResponseEntity.ok(jdbcService.findPersonsFullTextSearch(searchterm));
     }
@@ -69,7 +69,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void>  delete(@PathVariable UUID uuid) {
+    public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
 
         personService.delete(uuid);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -14,6 +14,7 @@ public class LiquibaseConfig {
      * * The method sets the data source to be used by SpringLiquibase,
      * by calling the dataSource passed in the parameter.
      * It then specifies the path to the Liquibase change file using the setChangeLog() method.
+     *
      * @param dataSource the data source for Liquibase.
      * @return a SpringLiquibase object configured with a data source and a Liquibase change file.
      */
@@ -23,6 +24,7 @@ public class LiquibaseConfig {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog("classpath:db.changelog/db.changelog-master.yml");
+
         return liquibase;
     }
 }
