@@ -3,7 +3,6 @@ package ru.clevertec.house.dao.jdbc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.clevertec.house.dao.jdbc.rowmapper.HouseRowMapper;
 import ru.clevertec.house.dao.jdbc.rowmapper.PersonRowMapper;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class GetDaoImpl implements GetDao{
+public class GetDaoImpl implements GetDao {
 
     private final JdbcTemplate jdbcTemplate;
 

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface JdbcService {
 
-    public List<PersonResponse> findPersonWhichLiveInHouse(UUID houseId);
+    List<PersonResponse> findPersonWhichLiveInHouse(UUID houseId);
 
-    public List<HouseResponse> findHousesWhichOwnPerson(UUID personId);
+    List<HouseResponse> findHousesWhichOwnPerson(UUID personId);
 }
