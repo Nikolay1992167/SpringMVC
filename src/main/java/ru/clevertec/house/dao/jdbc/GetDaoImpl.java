@@ -28,6 +28,7 @@ public class GetDaoImpl implements GetDao {
 
     private final HouseRowMapper houseRowMapper;
 
+
     @Override
     public List<Person> findPersonsWhichLiveInHouse(UUID houseId) {
 
