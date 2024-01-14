@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.clevertec.house.dao.jdbc.rowmapper.HouseRowMapper;
 import ru.clevertec.house.dao.jdbc.rowmapper.PersonRowMapper;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig(DataBaseConfigForDaoIT.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class GetDaoImplTest {
 
     private GetDao getDao;
@@ -84,7 +86,7 @@ class GetDaoImplTest {
     @Test
     void shouldReturnListOfHouseWhichOwnPerson() {
         // given
-        UUID personUuid = UUID.fromString("922e0213-e543-48ef-b8cb-92592afd5100");
+        UUID personUuid = UUID.fromString("63a1faca-a963-4d4b-bfb9-2dafaedc36fe");
         int expectedSize = 1;
 
         // when
