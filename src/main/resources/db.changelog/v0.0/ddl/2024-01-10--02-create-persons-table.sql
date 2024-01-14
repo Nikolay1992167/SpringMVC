@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS persons (
     passport_number VARCHAR(50) NOT NULL,
     create_date TIMESTAMP NOT NULL,
     update_date TIMESTAMP NOT NULL,
-    house_id BIGINT REFERENCES houses(id)
+    house_id BIGINT REFERENCES houses(id),
+    UNIQUE (passport_series, passport_number)
 );

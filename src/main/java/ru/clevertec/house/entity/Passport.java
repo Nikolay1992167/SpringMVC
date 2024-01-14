@@ -14,7 +14,6 @@ import lombok.experimental.FieldNameConstants;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"passport_series", "passport_number"}))
 public class Passport {
 
     @Column(name = "passport_series", nullable = false)

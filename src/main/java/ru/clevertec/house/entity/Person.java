@@ -1,5 +1,6 @@
 package ru.clevertec.house.entity;
 
+import jakarta.persistence.UniqueConstraint;
 import ru.clevertec.house.entity.listener.PersonListener;
 import ru.clevertec.house.enums.Sex;
 import jakarta.persistence.CascadeType;
@@ -35,7 +36,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldNameConstants
 @EntityListeners(PersonListener.class)
-@Table(name = "persons")
+@Table(name = "persons", uniqueConstraints = @UniqueConstraint(columnNames = {"passport_series", "passport_number"}))
 public class Person {
 
     @Id
