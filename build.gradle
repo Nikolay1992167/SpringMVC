@@ -42,7 +42,6 @@ dependencies {
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 
     testImplementation 'org.springframework:spring-test:6.1.2'
-
     testImplementation 'com.h2database:h2:2.2.224'
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
