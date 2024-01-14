@@ -7,11 +7,13 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 @Data
+@Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
+@FieldNameConstants
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"passport_series", "passport_number"}))
 public class Passport {
 
