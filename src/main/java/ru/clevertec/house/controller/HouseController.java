@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
+import ru.clevertec.house.dto.response.PaginationResponse;
 import ru.clevertec.house.service.HouseService;
 import ru.clevertec.house.service.JdbcService;
 
@@ -36,10 +37,18 @@ public class HouseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<HouseResponse>> findAll(@RequestParam(defaultValue = "1") int pageNumber,
-                                                       @RequestParam(defaultValue = "15") int pageSize) {
+    public ResponseEntity<PaginationResponse<HouseResponse>> findAll(@RequestParam(defaultValue = "1") int pageNumber,
+                                                                     @RequestParam(defaultValue = "15") int pageSize) {
 
-        return ResponseEntity.ok(houseService.findAll(pageNumber, pageSize));
+        List<HouseResponse> houses = houseService.findAll(pageNumber, pageSize);
+
+        PaginationResponse<HouseResponse> response = new PaginationResponse<>();
+        response.setCurrentPage(pageNumber);
+        response.setTotalPages(houses.size() / pageSize);
+        response.setTotalItems(houses.size());
+        response.setData(houses);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/owns/{uuid}")
