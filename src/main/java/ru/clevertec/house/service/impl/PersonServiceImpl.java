@@ -4,18 +4,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 import ru.clevertec.house.dao.HouseDao;
 import ru.clevertec.house.dao.PersonDao;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
+import ru.clevertec.house.enums.Sex;
+import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
 import ru.clevertec.house.service.PersonService;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -113,6 +119,44 @@ public class PersonServiceImpl implements PersonService {
         log.info("Person method update {}", response);
 
         return response;
+    }
+
+    @Override
+    public PersonResponse patchUpdate(UUID uuid, Map<String, Object> fields) {
+
+        if (fields == null ||
+            fields.isEmpty() ||
+            fields.containsValue(null) ||
+            fields.containsValue("")) {
+            throw CheckEmptyException.of(Person.class, fields);
+        }
+
+        Optional<Person> personInDB = personDao.findById(uuid);
+
+        if (personInDB.isPresent()) {
+            Person person = personInDB.get();
+
+            fields.forEach((k, v) -> {
+                Field field = ReflectionUtils.findField(Person.class, k);
+
+                if (field != null) {
+                    field.setAccessible(true);
+                    if (field.getType().equals(Sex.class)) {
+                        Sex sex = Sex.valueOf((String) v);
+                        ReflectionUtils.setField(field, person, sex);
+                    } else {
+                        ReflectionUtils.setField(field, person, v);
+                    }
+                }
+            });
+            Person updated = personDao.update(person);
+            PersonResponse response = personMapper.toResponse(updated);
+            log.info("Person method patch {}", response);
+
+            return response;
+        } else {
+            throw NotFoundException.of(Person.class, uuid);
+        }
     }
 
     /**

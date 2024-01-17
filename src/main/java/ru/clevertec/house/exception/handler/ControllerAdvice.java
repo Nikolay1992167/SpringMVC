@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 
 @Slf4j
@@ -33,5 +34,15 @@ public class ControllerAdvice {
 
         log.error(incorrectData.toString());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(incorrectData);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<IncorrectData> handleCheckEmptyException(CheckEmptyException exception){
+
+        incorrectData.setErrorMessage(exception.getMessage());
+        incorrectData.setErrorCode(HttpStatus.BAD_REQUEST.toString());
+
+        log.error(incorrectData.toString());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(incorrectData);
     }
 }

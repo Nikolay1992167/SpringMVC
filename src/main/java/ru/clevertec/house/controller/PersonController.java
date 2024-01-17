@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
+import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.service.JdbcService;
 import ru.clevertec.house.service.PersonService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -59,6 +62,12 @@ public class PersonController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(personService.save(personRequest));
+    }
+
+    @PatchMapping("/{uuid}")
+    public ResponseEntity<PersonResponse> patchUpdate(@PathVariable UUID uuid, @RequestBody Map<String, Object> fields) {
+
+        return ResponseEntity.ok(personService.patchUpdate(uuid, fields));
     }
 
     @PutMapping("/{uuid}")

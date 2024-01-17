@@ -4,6 +4,7 @@ import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface PersonService {
@@ -15,6 +16,8 @@ public interface PersonService {
     PersonResponse save(PersonRequest personRequest);
 
     PersonResponse update(UUID uuid, PersonRequest personRequest);
+
+    PersonResponse patchUpdate(UUID uuid, Map<String, Object> fields);
 
     void delete(UUID uuid);
 }
