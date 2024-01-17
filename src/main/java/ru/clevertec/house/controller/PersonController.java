@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
-import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.service.JdbcService;
 import ru.clevertec.house.service.PersonService;
 
