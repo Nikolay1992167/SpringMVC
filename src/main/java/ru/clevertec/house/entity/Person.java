@@ -1,8 +1,5 @@
 package ru.clevertec.house.entity;
 
-import jakarta.persistence.UniqueConstraint;
-import ru.clevertec.house.entity.listener.PersonListener;
-import ru.clevertec.house.enums.Sex;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -18,13 +15,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
+import ru.clevertec.house.entity.listener.PersonListener;
+import ru.clevertec.house.enums.Sex;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,8 +69,8 @@ public class Person {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToOne(fetch = FetchType.EAGER,
-            cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY,
+            cascade = {CascadeType.REFRESH})
     private House house;
 
     @ToString.Exclude

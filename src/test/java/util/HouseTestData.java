@@ -60,7 +60,7 @@ public class HouseTestData {
     }
 
     public HouseRequest getRequestDto() {
-        return new HouseRequest(area, country, city, street, number, residents, owners);
+        return new HouseRequest(area, country, city, street, number);
     }
 
     public Optional<House> getOptionalEntity() {

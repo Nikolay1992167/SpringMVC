@@ -11,6 +11,8 @@ import ru.clevertec.house.enums.Sex;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static ru.clevertec.house.util.Constants.PATTERN_FOR_DATA;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -24,9 +26,9 @@ public class PersonResponse {
     private Passport passport;
     private UUID houseUUID;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = PATTERN_FOR_DATA)
     private LocalDateTime createDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = PATTERN_FOR_DATA)
     private LocalDateTime updateDate;
 }

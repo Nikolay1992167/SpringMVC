@@ -3,25 +3,34 @@ package ru.clevertec.house.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.clevertec.house.dao.HouseDao;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.entity.House;
+import ru.clevertec.house.entity.Person;
+import ru.clevertec.house.exception.CheckEmptyException;
+import ru.clevertec.house.exception.HouseNotEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
+import ru.clevertec.house.repository.HouseRepository;
 import ru.clevertec.house.service.HouseService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService {
 
-    private final HouseDao houseDao;
+    private final HouseRepository houseRepository;
 
     private final HouseMapper houseMapper = Mappers.getMapper(HouseMapper.class);
 
@@ -35,29 +44,106 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public HouseResponse findById(UUID uuid) {
 
-        HouseResponse houseResponse = houseDao.findById(uuid)
+        HouseResponse response = houseRepository.findHouseByUuid(uuid)
                 .map(houseMapper::toResponse)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
-        log.info("House method findById {}", houseResponse);
 
-        return houseResponse;
+        log.info("House method findById {}", response);
+
+        return response;
     }
 
     /**
      * Finds all {@link HouseResponse}.
      *
+     * @param pageable the {@link Pageable} which will be parameters for pagination.
      * @return mapped from entity to dto list of all HouseResponse.
      */
     @Override
-    public List<HouseResponse> findAll(int pageNumber, int pageSize) {
+    public Page<HouseResponse> findAll(Pageable pageable) {
 
-        List<HouseResponse> houses = houseDao.findAll(pageNumber, pageSize)
-                .stream()
-                .map(houseMapper::toResponse)
-                .toList();
-        log.info("House method findAll {}", houses.size());
+        Page<HouseResponse> response = houseRepository.findAll(pageable)
+                .map(houseMapper::toResponse);
 
-        return new ArrayList<>(houses);
+        log.info("House method findAll {}", response.stream().count());
+
+        return response;
+    }
+
+    /**
+     * Finds and returns a list of {@link HouseResponse} objects that represent houses some time lives by a specific person.
+     *
+     * @param personId the UUID of the person to find houses for.
+     * @param pageable the {@link Pageable} which will be parameters for pagination.
+     * @return a list of {@link HouseResponse} objects, each representing a house lived by the person.
+     * The list is empty if no houses are found.
+     */
+    @Override
+    public Page<HouseResponse> findHousesWhichSomeTimeLivesPerson(UUID personId, Pageable pageable) {
+
+        Page<HouseResponse> responses = houseRepository.findHousesWhichSomeTimeLivesPerson(personId, pageable)
+                .map(houseMapper::toResponse);
+
+        log.info("House method findHousesWhichSomeTimeLivesPerson {}", responses.stream().count());
+
+        return responses;
+    }
+
+    /**
+     * Finds and returns a list of {@link HouseResponse} objects that represent houses owned by a specific person.
+     *
+     * @param personId the UUID of the person to find houses for.
+     * @param pageable the {@link Pageable} which will be parameters for pagination.
+     * @return a list of {@link HouseResponse} objects, each representing a house owned by the person.
+     * The list is empty if no houses are found.
+     */
+    @Override
+    public Page<HouseResponse> findHousesWhichOwnPerson(UUID personId, Pageable pageable) {
+
+        Page<HouseResponse> responses = houseRepository.findHousesWhichOwnPerson(personId, pageable)
+                .map(houseMapper::toResponse);
+
+        log.info("House method findHousesWhichOwnPerson {}", responses.stream().count());
+
+        return responses;
+    }
+
+    /**
+     * Finds and returns a list of {@link HouseResponse} objects that represent houses some time owned by a specific person.
+     *
+     * @param personId the UUID of the person to find houses for.
+     * @param pageable the {@link Pageable} which will be parameters for pagination.
+     * @return a list of {@link HouseResponse} objects, each representing a house owned by the person.
+     * The list is empty if no houses are found.
+     */
+    @Override
+    public Page<HouseResponse> findHousesWhichSomeTimeOwnPerson(UUID personId, Pageable pageable) {
+
+        Page<HouseResponse> responses = houseRepository.findHousesWhichSomeTimeOwnPerson(personId, pageable)
+                .map(houseMapper::toResponse);
+
+        log.info("House method findHousesWhichSomeTimeOwnPerson {}", responses.stream().count());
+
+        return responses;
+    }
+
+    /**
+     * Performs a full-text search to find houses based on a search term.
+     *
+     * @param searchTerm the term to search for in any text field of the houses.
+     * @param pageable   the {@link Pageable} which will be parameters for pagination.
+     * @return a list of {@link HouseResponse} objects, each representing a house that matches the search term.
+     * The list is empty if no matches are found.
+     */
+    @Override
+    public Page<HouseResponse> findHousesFullTextSearch(String searchTerm, Pageable pageable) {
+
+        Page<HouseResponse> responses = houseRepository.findHousesFullTextSearch(searchTerm, pageable)
+                .map(houseMapper::toResponse);
+
+        log.info("House method findHousesFullTextSearch {}", responses.stream().count());
+
+        return responses;
     }
 
     /**
@@ -68,40 +154,90 @@ public class HouseServiceImpl implements HouseService {
      * @return the saved {@link HouseResponse} which was mapped from House entity.
      */
     @Override
+    @Transactional
     public HouseResponse save(HouseRequest houseRequest) {
 
         House houseToSave = houseMapper.toHouse(houseRequest);
-        House saved = houseDao.save(houseToSave);
-        HouseResponse response = houseMapper.toResponse(saved);
-        log.info("House method save {}", response);
+        House savedHouse = houseRepository.save(houseToSave);
 
-        return response;
+        HouseResponse responseHouse = houseMapper.toResponse(savedHouse);
+        log.info("House method save {}", responseHouse);
+
+        return responseHouse;
     }
 
     /**
      * Updates one {@link House}.
      *
+     * @param uuid         the field uuid of the {@link House}.
      * @param houseRequest the {@link HouseRequest} which will be mapped to House and
      *                     updated in database by dao.
      * @return the updated {@link HouseResponse} which was mapped from House entity.
      * @throws NotFoundException if House is not exists by finding it by UUID.
      */
     @Override
+    @Transactional
     public HouseResponse update(UUID uuid, HouseRequest houseRequest) {
 
         House houseToUpdate = houseMapper.toHouse(houseRequest);
-        House houseInDB = houseDao.findById(uuid)
+
+        House houseInDB = houseRepository.findHouseByUuid(uuid)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
 
         houseToUpdate.setId(houseInDB.getId());
         houseToUpdate.setUuid(uuid);
         houseToUpdate.setCreateDate(houseInDB.getCreateDate());
 
-        House updated = houseDao.update(houseToUpdate);
-        HouseResponse response = houseMapper.toResponse(updated);
+        House updatedHouse = houseRepository.save(houseToUpdate);
+
+        HouseResponse response = houseMapper.toResponse(updatedHouse);
         log.info("House method update {}", response);
 
         return response;
+    }
+
+    /**
+     * Patch updates one {@link House}.
+     *
+     * @param uuid   the field uuid of the {@link House}.
+     * @param fields map of parameters for update {@link House} with uuid.
+     * @return the updated {@link HouseResponse} which was mapped from House entity.
+     * @throws NotFoundException if House is not exists by finding it by UUID.
+     */
+    @Override
+    @Transactional
+    public HouseResponse patchUpdate(UUID uuid, Map<String, Object> fields) {
+
+        if (fields == null ||
+            fields.isEmpty() ||
+            fields.containsValue(null) ||
+            fields.containsValue("")) {
+            throw CheckEmptyException.of(House.class, fields);
+        }
+
+        Optional<House> houseInDB = houseRepository.findHouseByUuid(uuid);
+
+        if (houseInDB.isPresent()) {
+            House house = houseInDB.get();
+
+            fields.forEach((k, v) -> {
+
+                Field field = ReflectionUtils.findField(House.class, k);
+
+                if (field != null) {
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, house, v);
+                }
+            });
+            House updatedHouse = houseRepository.save(house);
+            HouseResponse response = houseMapper.toResponse(updatedHouse);
+
+            log.info("Person method patch {}", response);
+
+            return response;
+        } else {
+            throw NotFoundException.of(House.class, uuid);
+        }
     }
 
     /**
@@ -111,10 +247,20 @@ public class HouseServiceImpl implements HouseService {
      * @throws NotFoundException if House is not exists by finding it by UUID.
      */
     @Override
+    @Transactional
     public void delete(UUID uuid) {
 
-        House house = houseDao.delete(uuid)
+        House houseInDB = houseRepository.findHouseByUuid(uuid)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
-        log.info("House method delete {}", house);
+
+        if (houseInDB != null) {
+
+            if (!houseInDB.getResidents().isEmpty()) {
+                throw new HouseNotEmptyException("Cannot delete house: there are residents living in it");
+            }
+
+            houseRepository.deleteHouseByUuid(uuid);
+        }
+        log.info("House method delete {}", houseInDB);
     }
 }

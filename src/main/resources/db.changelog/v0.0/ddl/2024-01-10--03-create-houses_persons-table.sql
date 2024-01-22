@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Minich:1
+--changeset Minich:3
 CREATE TABLE IF NOT EXISTS houses_persons (
     houses_id BIGINT NOT NULL REFERENCES houses(id),
     persons_id BIGINT NOT NULL REFERENCES persons(id),

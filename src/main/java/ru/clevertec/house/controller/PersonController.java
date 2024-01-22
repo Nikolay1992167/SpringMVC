@@ -1,7 +1,9 @@
 package ru.clevertec.house.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,16 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.house.dto.request.PersonRequest;
-import ru.clevertec.house.dto.response.PaginationResponse;
 import ru.clevertec.house.dto.response.PersonResponse;
-import ru.clevertec.house.entity.Person;
-import ru.clevertec.house.service.JdbcService;
 import ru.clevertec.house.service.PersonService;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,8 +29,6 @@ public class PersonController {
 
     private final PersonService personService;
 
-    private final JdbcService jdbcService;
-
     @GetMapping("/{uuid}")
     public ResponseEntity<PersonResponse> findById(@PathVariable UUID uuid) {
 
@@ -41,30 +36,43 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginationResponse<PersonResponse>> findAll(@RequestParam(defaultValue = "1") int pageNumber,
-                                                                      @RequestParam(defaultValue = "15") int pageSize) {
+    public ResponseEntity<Page<PersonResponse>> findAll(@PageableDefault(15) Pageable pageable) {
 
-        List<PersonResponse> persons = personService.findAll(pageNumber, pageSize);
+        Page<PersonResponse> personsPage = personService.findAll(pageable);
 
-        PaginationResponse<PersonResponse> response = new PaginationResponse<>();
-        response.setCurrentPage(pageNumber);
-        response.setTotalPages(persons.size()/pageSize);
-        response.setTotalItems(persons.size());
-        response.setData(persons);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(personsPage);
     }
 
     @GetMapping("/lives/{uuid}")
-    public ResponseEntity<List<PersonResponse>> findPersonWhichLiveInHouse(@PathVariable UUID uuid) {
+    public ResponseEntity<Page<PersonResponse>> findPersonsWhichLiveInHouse(@PathVariable UUID uuid,
+                                                                            @PageableDefault(15) Pageable pageable) {
+        Page<PersonResponse> personPage = personService.findPersonsWhichLiveInHouse(uuid, pageable);
 
-        return ResponseEntity.ok(jdbcService.findPersonWhichLiveInHouse(uuid));
+        return ResponseEntity.ok(personPage);
+    }
+
+    @GetMapping("/sometimelives/{uuid}")
+    public ResponseEntity<Page<PersonResponse>> findPersonsWhichSomeTimeLiveInHouse(@PathVariable UUID uuid,
+                                                                                    @PageableDefault(15) Pageable pageable) {
+        Page<PersonResponse> personsPage = personService.findPersonsWhichSomeTimeLiveInHouse(uuid, pageable);
+
+        return ResponseEntity.ok(personsPage);
+    }
+
+    @GetMapping("/sometimeownes/{uuid}")
+    public ResponseEntity<Page<PersonResponse>> findPersonsWhichSomeTimeOwnHouse(@PathVariable UUID uuid,
+                                                                                 @PageableDefault(15) Pageable pageable) {
+        Page<PersonResponse> personsPage = personService.findPersonsWhichSomeTimeOwnHouse(uuid, pageable);
+
+        return ResponseEntity.ok(personsPage);
     }
 
     @GetMapping("/fullsearch/{searchterm}")
-    public ResponseEntity<List<PersonResponse>> findPersonsFullTextSearch(@PathVariable String searchterm) {
+    public ResponseEntity<Page<PersonResponse>> findPersonsFullTextSearch(@PathVariable String searchterm,
+                                                                          @PageableDefault(15) Pageable pageable) {
+        Page<PersonResponse> personsPage = personService.findPersonsFullTextSearch(searchterm, pageable);
 
-        return ResponseEntity.ok(jdbcService.findPersonsFullTextSearch(searchterm));
+        return ResponseEntity.ok(personsPage);
     }
 
     @PostMapping
@@ -74,17 +82,17 @@ public class PersonController {
                 .body(personService.save(personRequest));
     }
 
-    @PatchMapping("/{uuid}")
-    public ResponseEntity<PersonResponse> patchUpdate(@PathVariable UUID uuid, @RequestBody Map<String, Object> fields) {
-
-        return ResponseEntity.ok(personService.patchUpdate(uuid, fields));
-    }
-
     @PutMapping("/{uuid}")
     public ResponseEntity<PersonResponse> update(@PathVariable UUID uuid,
                                                  @RequestBody PersonRequest personRequest) {
 
         return ResponseEntity.ok(personService.update(uuid, personRequest));
+    }
+
+    @PatchMapping("/{uuid}")
+    public ResponseEntity<PersonResponse> patchUpdate(@PathVariable UUID uuid, @RequestBody Map<String, Object> fields) {
+
+        return ResponseEntity.ok(personService.patchUpdate(uuid, fields));
     }
 
     @DeleteMapping("/{uuid}")

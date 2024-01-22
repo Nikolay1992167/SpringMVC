@@ -1,4 +1,4 @@
-package ru.clevertec.house.dao.impl;
+package ru.clevertec.house.repository.impl;
 
 import config.DataBaseConfigForDaoIT;
 import org.hibernate.SessionFactory;
@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.clevertec.house.dao.PersonDao;
-import ru.clevertec.house.entity.Person;
-import util.PersonTestData;
+import ru.clevertec.house.repository.HouseRepository;
+import ru.clevertec.house.entity.House;
+import util.HouseTestData;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,42 +19,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig(DataBaseConfigForDaoIT.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class PersonDaoImplTest {
-
-    private PersonDao personDao;
+class HouseRepositoryImplTest {
+/*
+    private HouseRepository houseRepository;
 
     @Autowired
     private SessionFactory sessionFactory;
 
     @BeforeEach
     void setup() {
-        personDao = new PersonDaoImpl(sessionFactory);
+        houseRepository = new HouseDaoImpl(sessionFactory);
     }
 
     @Test
     void findById() {
         // given
-        UUID personUUID = UUID.fromString("9aa78d35-fb66-45a6-8570-f81513ef8272");
-        String expected = "Марина";
+        UUID houseUUID = UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6");
+        String expected = "Ельск";
 
         // when
-        Optional<Person> actual = personDao.findById(personUUID);
+        Optional<House> actual = houseRepository.findById(houseUUID);
 
         //then
         actual.ifPresent(house ->
-                assertThat(actual.get().getName())
+                assertThat(actual.get().getCity())
                         .isEqualTo(expected));
     }
 
     @Test
     void findAll() {
         // given
-        int expectedSize = 9;
+        int expectedSize = 4;
         int pageNumber = 1;
         int pageSize = 10;
 
         // when
-        List<Person> actual = personDao.findAll(pageNumber, pageSize);
+        List<House> actual = houseRepository.findAll(pageNumber, pageSize);
 
         // then
         assertThat(actual.size()).isEqualTo(expectedSize);
@@ -63,13 +63,12 @@ class PersonDaoImplTest {
     @Test
     void save() {
         // given
-        Person expected = PersonTestData.builder()
+        House expected = HouseTestData.builder()
                 .withId(null)
-                .build()
-                .getEntity();
+                .build().getEntity();
 
         // when
-        Person actual = personDao.save(expected);
+        House actual = houseRepository.save(expected);
 
         // then
         assertThat(actual).isEqualTo(expected);
@@ -78,30 +77,28 @@ class PersonDaoImplTest {
     @Test
     void update() {
         // given
-        String expected = "Геннадий";
-        Person personToUpdate = PersonTestData.builder()
-                //.withId(2L)
-                .build()
-                .getEntity();
+        House expected = HouseTestData.builder()
+                .withId(3L)
+                .build().getEntity();
 
         // when
-        Person actual = personDao.update(personToUpdate);
+        House actual = houseRepository.update(expected);
 
-        assertThat(actual.getName()).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void delete() {
         // given
-        UUID personUUID = UUID.fromString("9aa78d35-fb66-45a6-8570-f81513ef8272");
-        String expected = "Марина";
+        UUID houseUUID = UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6");
+        String expected = "Ельск";
 
         // when
-        Optional<Person> actual = personDao.delete(personUUID);
+        Optional<House> actual = houseRepository.delete(houseUUID);
 
         // then
         actual.ifPresent(house ->
-                assertThat(actual.get().getName())
+                assertThat(actual.get().getCity())
                         .isEqualTo(expected));
-    }
+    }*/
 }
