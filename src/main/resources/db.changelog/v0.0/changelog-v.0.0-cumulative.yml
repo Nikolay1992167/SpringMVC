@@ -21,5 +21,3 @@ databaseChangeLog:
       file: db.changelog/v0.0/dml/2024-01-10--02-insert-persons-table.sql
   - include:
       file: db.changelog/v0.0/dml/2024-01-10--03-insert-houses_persons-table.sql
-  - include:
-      file: db.changelog/v0.0/dml/2024-01-20--04-insert-house_history-table.sql

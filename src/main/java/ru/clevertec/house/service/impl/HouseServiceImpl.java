@@ -11,11 +11,11 @@ import org.springframework.util.ReflectionUtils;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.entity.House;
-import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.HouseNotEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
+import ru.clevertec.house.proxy.Cache;
 import ru.clevertec.house.repository.HouseRepository;
 import ru.clevertec.house.service.HouseService;
 
@@ -41,6 +41,7 @@ public class HouseServiceImpl implements HouseService {
      * @return HouseResponse with the specified UUID and mapped from House entity.
      * @throws NotFoundException if House is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     public HouseResponse findById(UUID uuid) {
 
@@ -153,6 +154,7 @@ public class HouseServiceImpl implements HouseService {
      *                     and saved in database by dao.
      * @return the saved {@link HouseResponse} which was mapped from House entity.
      */
+    @Cache
     @Override
     @Transactional
     public HouseResponse save(HouseRequest houseRequest) {
@@ -175,6 +177,7 @@ public class HouseServiceImpl implements HouseService {
      * @return the updated {@link HouseResponse} which was mapped from House entity.
      * @throws NotFoundException if House is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     @Transactional
     public HouseResponse update(UUID uuid, HouseRequest houseRequest) {
@@ -246,6 +249,7 @@ public class HouseServiceImpl implements HouseService {
      * @param uuid the field of the House.
      * @throws NotFoundException if House is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     @Transactional
     public void delete(UUID uuid) {
