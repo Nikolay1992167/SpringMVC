@@ -80,24 +80,4 @@ public class PersonTestData {
     public PersonResponse getResponseDto() {
         return new PersonResponse(uuid, name, surname, sex, passport, house.getUuid(), createDate, updateDate);
     }
-
-    public List<Person> getListOfPerson() {
-        return List.of(PersonTestData.builder()
-                        .build()
-                        .getEntity(),
-                PersonTestData.builder()
-                        .withId(10L)
-                        .withName("Леонид")
-                        .withSurname("Боровик")
-                        .withSex(Sex.FEMALE)
-                        .withPassport(PassportTestData.builder()
-                                .withSeries("IO")
-                                .withNumber("139248")
-                                .build()
-                                .getPassport())
-                        .withCreateDate(LocalDateTime.of(2020, 2, 1, 10, 0, 0))
-                        .withUpdateDate(LocalDateTime.of(2022, 5, 2, 13, 10, 0))
-                        .build()
-                        .getEntity());
-    }
 }
