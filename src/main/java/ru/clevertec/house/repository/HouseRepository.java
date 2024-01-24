@@ -23,7 +23,7 @@ public interface HouseRepository extends JpaRepository<House, UUID> {
 
     Page<House> findByHouseHistoriesPersonUuidAndHouseHistoriesType(UUID uuid, TypePerson type, Pageable pageable);
 
-    Page<House> findByOwners_Uuid(UUID personId, Pageable pageable);
+    Page<House> findByOwnersUuid(UUID personId, Pageable pageable);
 
     @Query("""
             SELECT h FROM House h
