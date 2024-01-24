@@ -104,7 +104,7 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public Page<HouseResponse> findHousesWhichOwnPerson(UUID personId, Pageable pageable) {
 
-        Page<HouseResponse> responses = houseRepository.findByOwners_Uuid(personId, pageable)
+        Page<HouseResponse> responses = houseRepository.findByOwnersUuid(personId, pageable)
                 .map(houseMapper::toResponse);
 
         log.info("House method findHousesWhichOwnPerson {}", responses.stream().count());

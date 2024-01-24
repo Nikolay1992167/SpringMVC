@@ -5,6 +5,7 @@ import lombok.Data;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.House;
+import ru.clevertec.house.entity.HouseHistory;
 import ru.clevertec.house.entity.Passport;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.Sex;
@@ -12,6 +13,7 @@ import ru.clevertec.house.enums.Sex;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static util.initdata.ConstantsForPerson.PERSON_CREATE_DATE;
@@ -60,8 +62,11 @@ public class PersonTestData {
     @Builder.Default
     private List<House> ownedHouses = List.of();
 
+    @Builder.Default
+    private Set<HouseHistory> personHouseHistories = Set.of();
+
     public Person getEntity() {
-        return new Person(id, uuid, name, surname, sex, passport, createDate, updateDate, house, ownedHouses);
+        return new Person(id, uuid, name, surname, sex, passport, createDate, updateDate, house, ownedHouses, personHouseHistories);
     }
 
     public PersonRequest getRequestDto() {
