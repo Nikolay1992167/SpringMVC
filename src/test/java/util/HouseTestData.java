@@ -9,7 +9,6 @@ import ru.clevertec.house.entity.HouseHistory;
 import ru.clevertec.house.entity.Person;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
