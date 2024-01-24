@@ -17,5 +17,6 @@ public interface PersonMapper {
     @Mapping(target = "house", ignore = true)
     @Mapping(target = "createDate", ignore = true)
     @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "personHouseHistories", ignore = true)
     Person toPerson(PersonRequest personRequest);
 }

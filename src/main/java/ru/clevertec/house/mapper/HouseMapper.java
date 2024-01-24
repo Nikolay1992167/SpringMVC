@@ -15,5 +15,8 @@ public interface HouseMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "createDate", ignore = true)
+    @Mapping(target = "residents", ignore = true)
+    @Mapping(target = "owners", ignore = true)
+    @Mapping(target = "houseHistories", ignore = true)
     House toHouse(HouseRequest houseRequest);
 }

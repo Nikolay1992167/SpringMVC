@@ -15,8 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -30,6 +29,7 @@ import ru.clevertec.house.enums.Sex;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -81,4 +81,9 @@ public class Person {
             joinColumns = @JoinColumn(name = "persons_id"),
             inverseJoinColumns = @JoinColumn(name = "houses_id"))
     private List<House> ownedHouses;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    private Set<HouseHistory> personHouseHistories;
 }

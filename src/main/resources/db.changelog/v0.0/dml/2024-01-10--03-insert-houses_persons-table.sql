@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Minich:3
+--changeset Minich:10
 INSERT INTO houses_persons(houses_id, persons_id)
 VALUES (1, 1),
        (1, 2),

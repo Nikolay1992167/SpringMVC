@@ -11,6 +11,7 @@ import org.springframework.util.ReflectionUtils;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.entity.House;
+import ru.clevertec.house.enums.TypePerson;
 import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.HouseNotEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
@@ -82,7 +83,9 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public Page<HouseResponse> findHousesWhichSomeTimeLivesPerson(UUID personId, Pageable pageable) {
 
-        Page<HouseResponse> responses = houseRepository.findHousesWhichSomeTimeLivesPerson(personId, pageable)
+        TypePerson typePerson = TypePerson.TENANT;
+
+        Page<HouseResponse> responses = houseRepository.findByHouseHistoriesPersonUuidAndHouseHistoriesType(personId, typePerson, pageable)
                 .map(houseMapper::toResponse);
 
         log.info("House method findHousesWhichSomeTimeLivesPerson {}", responses.stream().count());
@@ -101,7 +104,7 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public Page<HouseResponse> findHousesWhichOwnPerson(UUID personId, Pageable pageable) {
 
-        Page<HouseResponse> responses = houseRepository.findHousesWhichOwnPerson(personId, pageable)
+        Page<HouseResponse> responses = houseRepository.findByOwners_Uuid(personId, pageable)
                 .map(houseMapper::toResponse);
 
         log.info("House method findHousesWhichOwnPerson {}", responses.stream().count());
@@ -120,7 +123,9 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public Page<HouseResponse> findHousesWhichSomeTimeOwnPerson(UUID personId, Pageable pageable) {
 
-        Page<HouseResponse> responses = houseRepository.findHousesWhichSomeTimeOwnPerson(personId, pageable)
+        TypePerson typePerson = TypePerson.OWNER;
+
+        Page<HouseResponse> responses = houseRepository.findByHouseHistoriesPersonUuidAndHouseHistoriesType(personId, typePerson, pageable)
                 .map(houseMapper::toResponse);
 
         log.info("House method findHousesWhichSomeTimeOwnPerson {}", responses.stream().count());

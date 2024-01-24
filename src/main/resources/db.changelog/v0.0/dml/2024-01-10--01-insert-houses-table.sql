@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Minich:1
+--changeset Minich:8
 INSERT INTO houses(uuid, area, country, city, street, number, create_date)
 VALUES ('0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6', 'Гомельская', 'Беларусь', 'Ельск', 'Ленина', 2, '2023-12-30T12:00:00.000'),
        ('9724b9b8-216d-4ab9-92eb-e6e06029580d', 'Гомельская', 'Беларусь', 'Мозырь', 'Геологов', 15, '1998-08-12T12:00:00.000'),

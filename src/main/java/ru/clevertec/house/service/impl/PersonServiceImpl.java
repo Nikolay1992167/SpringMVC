@@ -13,6 +13,7 @@ import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.Sex;
+import ru.clevertec.house.enums.TypePerson;
 import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
@@ -90,7 +91,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Page<PersonResponse> findPersonsWhichLiveInHouse(UUID houseId, Pageable pageable) {
 
-        Page<PersonResponse> response = personRepository.findPersonsWhichLiveInHouse(houseId, pageable)
+        Page<PersonResponse> response = personRepository.findAllByHouseUuid(houseId, pageable)
                 .map(personMapper::toResponse);
 
         log.info("Person method findPersonsWhichLiveInHouse {}", response.stream().count());
@@ -109,7 +110,9 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Page<PersonResponse> findPersonsWhichSomeTimeLiveInHouse(UUID houseId, Pageable pageable) {
 
-        Page<PersonResponse> responses = personRepository.findPersonsWhichSomeTimeLiveInHouse(houseId, pageable)
+        TypePerson typePerson = TypePerson.TENANT;
+
+        Page<PersonResponse> responses = personRepository.findByPersonHouseHistoriesHouseUuidAndPersonHouseHistoriesType(houseId, typePerson, pageable)
                 .map(personMapper::toResponse);
 
         log.info("Person method findPersonsWhichSomeTimeLiveInHouse {}", responses.stream().count());
@@ -128,7 +131,9 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Page<PersonResponse> findPersonsWhichSomeTimeOwnHouse(UUID houseId, Pageable pageable) {
 
-        Page<PersonResponse> responses = personRepository.findPersonsWhichSomeTimeOwnHouse(houseId, pageable)
+        TypePerson typePerson = TypePerson.OWNER;
+
+        Page<PersonResponse> responses = personRepository.findByPersonHouseHistoriesHouseUuidAndPersonHouseHistoriesType(houseId, typePerson, pageable)
                 .map(personMapper::toResponse);
 
         log.info("Person method findPersonsWhichSomeTimeOwnHouse {}", responses.stream().count());
@@ -177,7 +182,7 @@ public class PersonServiceImpl implements PersonService {
                 .map(House::getUuid)
                 .collect(Collectors.toList());
 
-        List<House> existingHouses = houseRepository.findAllByUuids(houseUuids);
+        List<House> existingHouses = houseRepository.findAllByUuidIn(houseUuids);
 
         Set<UUID> existingHouseUuids = existingHouses.stream()
                 .map(House::getUuid)

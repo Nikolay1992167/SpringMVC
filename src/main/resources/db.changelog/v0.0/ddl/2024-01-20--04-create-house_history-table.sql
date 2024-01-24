@@ -1,11 +1,11 @@
 --liquibase formatted sql
 --changeset Minich:4
-CREATE TYPE type AS ENUM ('OWNER', 'TENANT');
-
 CREATE TABLE house_history (
     id BIGSERIAL PRIMARY KEY NOT NULL,
-    house_id BIGINT NOT NULL REFERENCES houses(id),
-    person_id BIGINT NOT NULL REFERENCES persons(id),
+    house_id BIGINT NOT NULL,
+    person_id BIGINT NOT NULL,
     date TIMESTAMP NOT NULL,
-    type_person type NOT NULL
+    type_id INTEGER NOT NULL REFERENCES types
 );
+
+

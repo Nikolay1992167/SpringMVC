@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Minich:2
+--changeset Minich:9
 INSERT INTO persons(uuid, name, surname, sex, passport_series, passport_number, create_date, update_date, house_id)
 VALUES ('9aa78d35-fb66-45a6-8570-f81513ef8272', 'Марина', 'Громкая', 'FEMALE', 'HB', '123456', '2022-03-06T10:00:00.000', '2022-03-06T10:00:00.000', 1),
        ('922e0213-e543-48ef-b8cb-92592afd5100', 'Иван', 'Рогозин', 'MALE', 'HM', '234567', '2022-01-07T16:00:00.000', '2022-01-07T16:00:00.000', 1),

@@ -1,24 +1,20 @@
 package ru.clevertec.house.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-import ru.clevertec.house.entity.listener.HouseListener;
 import ru.clevertec.house.enums.TypePerson;
+import ru.clevertec.house.util.ConverterTypePerson;
 
 import java.time.LocalDateTime;
 
@@ -34,18 +30,16 @@ public class HouseHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "house_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private House house;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "person_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Person person;
 
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name = "type_person", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ConverterTypePerson.class)
+    @Column(name = "type_id")
     private TypePerson type;
 }
