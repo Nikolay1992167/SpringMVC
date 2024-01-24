@@ -2,13 +2,10 @@ package ru.clevertec.house.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.request.PersonRequest;
-import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Passport;
-import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.Sex;
 import util.PostgresqlTestContainer;
 
