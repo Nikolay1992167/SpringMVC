@@ -14,20 +14,26 @@ import org.springframework.data.domain.PageRequest;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.entity.House;
+import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.TypePerson;
+import ru.clevertec.house.exception.CheckEmptyException;
+import ru.clevertec.house.exception.HouseNotEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
 import ru.clevertec.house.repository.HouseRepository;
 import util.HouseTestData;
+import util.PersonTestData;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -360,7 +366,7 @@ class HouseServiceImplTest {
         }
 
         @Test
-        void shouldReturnThrowIfHouseNotExistWithUUID() {
+        void shouldReturnThrowIfHouseNotExistWithUUIDWhenUpdate() {
             // given
             UUID incorrectUUID = INCORRECT_UUID;
             HouseRequest requestDto = HouseTestData.builder()
@@ -376,6 +382,36 @@ class HouseServiceImplTest {
             assertThrows(NotFoundException.class, () -> houseService.update(incorrectUUID, requestDto));
             verify(houseRepository, times(1)).findHouseByUuid(incorrectUUID);
             verify(houseRepository, never()).save(any(House.class));
+        }
+
+        @Test
+        void shouldReturnThrowWhenFieldsAreEmpty() {
+            // given
+            UUID houseUuid = HOUSE_UUID;
+            Map<String, Object> fields = new HashMap<>();
+
+            // when
+            Throwable thrown = catchThrowable(() -> houseService.patchUpdate(houseUuid, fields));
+
+            // then
+            assertThat(thrown).isInstanceOf(CheckEmptyException.class);
+        }
+
+        @Test
+        void shouldReturnThrowIfHouseNotExistWithUUIDWhenPatchUpdate() {
+            // given
+            UUID houseUuid = HOUSE_UUID;
+            String incorrectData = "incorrect";
+            Map<String, Object> fields = new HashMap<>();
+            fields.put(incorrectData, incorrectData);
+
+            when(houseRepository.findHouseByUuid(houseUuid)).thenReturn(Optional.empty());
+
+            // when
+            Throwable thrown = catchThrowable(() -> houseService.patchUpdate(houseUuid, fields));
+
+            // then
+            assertThat(thrown).isInstanceOf(NotFoundException.class);
         }
     }
 
@@ -411,6 +447,28 @@ class HouseServiceImplTest {
             // when, then
             assertThrows(NotFoundException.class, () -> houseService.delete(incorrectUUID));
             verify(houseRepository, never()).deleteHouseByUuid(incorrectUUID);
+        }
+
+        @Test
+        void shouldReturnThrowIfHouseHasResidents() {
+            // given
+            UUID houseUuid = HOUSE_UUID;
+
+            House house = HouseTestData.builder()
+                    .build()
+                    .getEntity();
+
+            Person person = PersonTestData.builder()
+                    .build()
+                    .getEntity();
+            house.setResidents(Set.of(person));
+            when(houseRepository.findHouseByUuid(houseUuid)).thenReturn(Optional.of(house));
+
+            // when
+            Throwable thrown = catchThrowable(() -> houseService.delete(houseUuid));
+
+            // then
+            assertThat(thrown).isInstanceOf(HouseNotEmptyException.class);
         }
     }
 }
