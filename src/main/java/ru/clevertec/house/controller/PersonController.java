@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.house.controller.api.PersonOpenApi;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.service.PersonService;
@@ -25,7 +26,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/persons")
-public class PersonController {
+public class PersonController implements PersonOpenApi {
 
     private final PersonService personService;
 

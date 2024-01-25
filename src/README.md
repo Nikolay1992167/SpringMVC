@@ -22,6 +22,7 @@
 * 3. GET для получения всех House, где проживал Person.
 * 4. GET для получения всех House, которыми когда-либо владел Person.
 * Добавлен кэш из задания по рефлексии на сервисный слой House и Person.
+* Добавлено swagger (OPEN API).
 
 ### Технологии применённые в проекте
 
@@ -39,6 +40,7 @@
 * Spring-boot-starter-test
 * Assertj-core 3.24.2
 * Mockito-junit-jupiter 5.8.0
+* Springdoc-openapi-starter-webmvc-ui 2.3.0
 
 ### Инструкция по запуску приложения локально
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.house.controller.api.HouseOpenApi;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.service.HouseService;
@@ -25,7 +26,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/houses")
-public class HouseController {
+public class HouseController implements HouseOpenApi {
 
     private final HouseService houseService;
 
