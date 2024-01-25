@@ -15,11 +15,10 @@ import ru.clevertec.house.exception.NotFoundException;
 @RequiredArgsConstructor
 public class ControllerAdvice {
 
-    private final IncorrectData incorrectData;
-
     @ExceptionHandler
     public ResponseEntity<IncorrectData> handleNotFoundException(NotFoundException exception) {
 
+        IncorrectData incorrectData = new IncorrectData();
         incorrectData.setErrorMessage(exception.getMessage());
         incorrectData.setErrorCode(HttpStatus.NOT_FOUND.toString());
 
@@ -30,6 +29,7 @@ public class ControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<IncorrectData> handleThrowable(Throwable exception) {
 
+        IncorrectData incorrectData = new IncorrectData();
         incorrectData.setErrorMessage(exception.getMessage());
         incorrectData.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
 
@@ -38,8 +38,9 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<IncorrectData> handleCheckEmptyException(CheckEmptyException exception){
+    public ResponseEntity<IncorrectData> handleCheckEmptyException(CheckEmptyException exception) {
 
+        IncorrectData incorrectData = new IncorrectData();
         incorrectData.setErrorMessage(exception.getMessage());
         incorrectData.setErrorCode(HttpStatus.BAD_REQUEST.toString());
 
@@ -48,8 +49,9 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<IncorrectData> handleHouseNotEmptyException(HouseNotEmptyException exception){
+    public ResponseEntity<IncorrectData> handleHouseNotEmptyException(HouseNotEmptyException exception) {
 
+        IncorrectData incorrectData = new IncorrectData();
         incorrectData.setErrorMessage(exception.getMessage());
         incorrectData.setErrorCode(HttpStatus.CONFLICT.toString());
 
