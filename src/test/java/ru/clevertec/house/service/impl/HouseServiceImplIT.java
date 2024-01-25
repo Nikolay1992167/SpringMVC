@@ -153,7 +153,7 @@ public class HouseServiceImplIT extends PostgresqlTestContainer {
     @Test
     void shouldReturnUpdatedHouseResponseWhenPatchUpdateInDB() {
         // given
-        UUID houseUuid = UUID.fromString("e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15");
+        UUID houseUuid = UUID.fromString("c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13");
         String area = "Витебская";
         int number = 12;
         Map<String, Object> fields = new HashMap<>();

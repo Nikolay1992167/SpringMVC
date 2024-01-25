@@ -1,12 +1,9 @@
 #SPRING CONFIGURATION
 spring:
+  profiles:
+    active: dev
   application:
     name: HouseService
-  datasource:
-    url: jdbc:postgresql://localhost:5432/houses
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 87654321
   cache:
     capacity: 5
     algorithm: LFUCache

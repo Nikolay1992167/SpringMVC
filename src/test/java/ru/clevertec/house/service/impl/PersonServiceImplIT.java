@@ -198,7 +198,7 @@ public class PersonServiceImplIT extends PostgresqlTestContainer {
     @Test
     void shouldDeletePersonInDB() {
         // given
-        UUID personUuid = UUID.fromString("40291d40-5948-448c-b66a-d09591d3500f");
+        UUID personUuid = UUID.fromString("3df38f0a-09bb-4bbc-a80c-2f827b6f9d75");
 
         // when
         personService.delete(personUuid);

@@ -1,12 +1,6 @@
 spring:
   datasource:
-    driver: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/houses
-    username: postgres
-    password: 87654321
-    poolSize: 3
-  hibernate:
-    ddl: none
-    dialect: org.hibernate.dialect.PostgreSQLDialect
-    show_Sql: true
-    format_Sql: true
+    driver:
+    url:
+    username:
+    password:
