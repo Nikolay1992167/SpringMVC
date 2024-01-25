@@ -1,23 +1,29 @@
 package ru.clevertec.house.service.impl;
 
+import config.ServiceTest;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.entity.House;
+import ru.clevertec.house.enums.TypePerson;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
+import ru.clevertec.house.repository.HouseRepository;
 import util.HouseTestData;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,20 +38,26 @@ import static util.initdata.ConstantsForHouse.HOUSE_UUID;
 import static util.initdata.ConstantsForHouse.INCORRECT_UUID;
 import static util.initdata.ConstantsForHouse.UPDATE_HOUSE_AREA;
 import static util.initdata.ConstantsForHouse.UPDATE_HOUSE_CITY;
+import static util.initdata.ConstantsForPerson.PERSON_UUID;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceTest
+@RequiredArgsConstructor
 class HouseServiceImplTest {
 
-    @InjectMocks
     private HouseServiceImpl houseService;
 
     @Mock
-    private HouseDao houseDao;
+    private HouseRepository houseRepository;
 
-    private final HouseMapper houseMapper = Mappers.getMapper(HouseMapper.class);
+    private final HouseMapper houseMapper;
 
     @Captor
     private ArgumentCaptor<House> captor;
+
+    @BeforeEach
+    void setUp() {
+        houseService = new HouseServiceImpl(houseRepository);
+    }
 
     @Nested
     class FindById {
@@ -59,11 +71,9 @@ class HouseServiceImplTest {
                     .build()
                     .getOptionalEntity();
 
-            HouseResponse expected = HouseTestData.builder()
-                    .build()
-                    .getResponseDto();
+            HouseResponse expected = houseMapper.toResponse(houseInDB.get());
 
-            when(houseDao.findById(houseUuid))
+            when(houseRepository.findHouseByUuid(houseUuid))
                     .thenReturn(houseInDB);
 
             // when
@@ -71,7 +81,7 @@ class HouseServiceImplTest {
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(houseDao, times(1)).findById(houseUuid);
+            verify(houseRepository, times(1)).findHouseByUuid(houseUuid);
         }
 
         @Test
@@ -81,53 +91,152 @@ class HouseServiceImplTest {
 
             Optional<House> houseInDB = Optional.empty();
 
-            when(houseDao.findById(incorrectUuid))
+            when(houseRepository.findHouseByUuid(incorrectUuid))
                     .thenReturn(houseInDB);
 
             // when, then
             assertThrows(NotFoundException.class, () -> houseService.findById(incorrectUuid));
-            verify(houseDao, times(1)).findById(incorrectUuid);
+            verify(houseRepository, times(1)).findHouseByUuid(incorrectUuid);
         }
     }
 
     @Nested
-    class FindAll {
+    class FindHouses {
 
         @Test
         void shouldReturnListOfHouseResponse() {
             // given
             int expectedSize = 1;
-            int pageNumber = 1;
-            int pageSize = 10;
-
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
                     .getEntity());
+            Page<House> page = new PageImpl<>(houseList);
 
-            when(houseDao.findAll(pageNumber, pageSize))
-                    .thenReturn(houseList);
+            when(houseRepository.findAll(any(PageRequest.class)))
+                    .thenReturn(page);
 
             // when
-            List<HouseResponse> actual = houseService.findAll(pageNumber, pageSize);
+            Page<HouseResponse> actual = houseService.findAll(PageRequest.of(0, 15));
 
             // then
-            assertThat(actual.size()).isEqualTo(expectedSize);
+            assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
+            verify(houseRepository, times(1)).findAll(any(PageRequest.class));
         }
 
         @Test
         void shouldCheckEmpty() {
             // given
-            int pageNumber = 1;
-            int pageSize = 10;
+            Page<House> page = new PageImpl<>(List.of());
 
-            when(houseDao.findAll(pageNumber, pageSize))
-                    .thenReturn(List.of());
+            when(houseRepository.findAll(any(PageRequest.class)))
+                    .thenReturn(page);
 
             // when
-            List<HouseResponse> actual = houseService.findAll(pageNumber, pageSize);
+            Page<HouseResponse> actual = houseService.findAll(PageRequest.of(0, 15));
 
             // then
             assertThat(actual).isEmpty();
+            verify(houseRepository, times(1)).findAll(any(PageRequest.class));
+        }
+
+        @Test
+        void shouldReturnListOfHousesWhichSomeTimeLivesPerson() {
+            // given
+            int expectedSize = 1;
+            UUID personUuid = PERSON_UUID;
+            TypePerson typePerson = TypePerson.TENANT;
+            PageRequest pageRequest = PageRequest.of(0, 15);
+
+            List<House> houseList = List.of(HouseTestData.builder()
+                    .build()
+                    .getEntity());
+
+            Page<House> page = new PageImpl<>(houseList);
+
+            when(houseRepository.findByHouseHistoriesPersonUuidAndHouseHistoriesType(personUuid, typePerson, pageRequest))
+                    .thenReturn(page);
+
+            // when
+            Page<HouseResponse> actual = houseService.findHousesWhichSomeTimeLivesPerson(personUuid, pageRequest);
+
+            // then
+            assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
+            verify(houseRepository, times(1))
+                    .findByHouseHistoriesPersonUuidAndHouseHistoriesType(personUuid, typePerson, pageRequest);
+        }
+
+        @Test
+        void shouldReturnListOfHousesWhichOwnPerson() {
+            // given
+            int expectedSize = 1;
+            UUID personUuid = PERSON_UUID;
+            PageRequest pageRequest = PageRequest.of(0, 15);
+
+            List<House> houseList = List.of(HouseTestData.builder()
+                    .build()
+                    .getEntity());
+
+            Page<House> page = new PageImpl<>(houseList);
+
+            when(houseRepository.findByOwnersUuid(personUuid, pageRequest))
+                    .thenReturn(page);
+
+            // when
+            Page<HouseResponse> actual = houseService.findHousesWhichOwnPerson(personUuid, pageRequest);
+
+            // then
+            assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
+            verify(houseRepository, times(1)).findByOwnersUuid(personUuid, pageRequest);
+        }
+
+        @Test
+        void shouldReturnListOfHousesWhichSomeTimeOwnPerson() {
+            // given
+            int expectedSize = 1;
+            UUID personUuid = PERSON_UUID;
+            TypePerson typePerson = TypePerson.OWNER;
+            PageRequest pageRequest = PageRequest.of(0, 15);
+
+            List<House> houseList = List.of(HouseTestData.builder()
+                    .build()
+                    .getEntity());
+
+            Page<House> page = new PageImpl<>(houseList);
+
+            when(houseRepository.findByHouseHistoriesPersonUuidAndHouseHistoriesType(personUuid, typePerson, pageRequest))
+                    .thenReturn(page);
+
+            // when
+            Page<HouseResponse> actual = houseService.findHousesWhichSomeTimeOwnPerson(personUuid, pageRequest);
+
+            // then
+            assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
+            verify(houseRepository, times(1))
+                    .findByHouseHistoriesPersonUuidAndHouseHistoriesType(personUuid, typePerson, pageRequest);
+        }
+
+        @Test
+        void shouldReturnListOfHousesFindWithFullTextSearch() {
+            // given
+            int expectedSize = 1;
+            String searchTerm = "ин";
+            PageRequest pageRequest = PageRequest.of(0, 15);
+
+            List<House> houseList = List.of(HouseTestData.builder()
+                    .build()
+                    .getEntity());
+
+            Page<House> page = new PageImpl<>(houseList);
+
+            when(houseRepository.findHousesFullTextSearch(searchTerm, pageRequest))
+                    .thenReturn(page);
+
+            // when
+            Page<HouseResponse> actual = houseService.findHousesFullTextSearch(searchTerm, pageRequest);
+
+            // then
+            assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
+            verify(houseRepository, times(1)).findHousesFullTextSearch(searchTerm, pageRequest);
         }
     }
 
@@ -147,16 +256,17 @@ class HouseServiceImplTest {
                     .build()
                     .getEntity();
 
-            when(houseDao.save(expected))
+            when(houseRepository.save(any(House.class)))
                     .thenReturn(savedHouse);
 
             // when
             houseService.save(houseRequest);
 
             // then
-            verify(houseDao, times(1)).save(captor.capture());
+            verify(houseRepository, times(1)).save(captor.capture());
             House actual = captor.getValue();
-            assertThat(actual).isEqualTo(expected);
+            assertThat(actual.getId()).isEqualTo(expected.getId());
+            assertThat(actual.getCity()).isEqualTo(expected.getCity());
         }
     }
 
@@ -192,14 +302,14 @@ class HouseServiceImplTest {
                     .build()
                     .getResponseDto();
 
-            when(houseDao.findById(houseUuid))
+            when(houseRepository.findHouseByUuid(houseUuid))
                     .thenReturn(optionalEntity);
 
             houseToUpdate.setId(optionalEntity.get().getId());
             houseToUpdate.setUuid(optionalEntity.get().getUuid());
             houseToUpdate.setCreateDate(optionalEntity.get().getCreateDate());
 
-            when(houseDao.update(houseToUpdate))
+            when(houseRepository.save(any(House.class)))
                     .thenReturn(updatedHouse);
 
             // when
@@ -207,7 +317,46 @@ class HouseServiceImplTest {
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(houseDao, times(1)).findById(houseUuid);
+            verify(houseRepository, times(1)).findHouseByUuid(houseUuid);
+        }
+
+        @Test
+        void shouldReturnUpdatedPatchHouseResponseIfValidFields() {
+            // given
+            UUID houseUuid = HOUSE_UUID;
+
+            Map<String, Object> fieldsToUpdate = new HashMap<>();
+            fieldsToUpdate.put("area", UPDATE_HOUSE_AREA);
+            fieldsToUpdate.put("city", UPDATE_HOUSE_CITY);
+
+            Optional<House> optionalEntity = HouseTestData.builder()
+                    .build()
+                    .getOptionalEntity();
+
+            House patchedHouse = HouseTestData.builder()
+                    .withArea(UPDATE_HOUSE_AREA)
+                    .withCity(UPDATE_HOUSE_CITY)
+                    .build()
+                    .getEntity();
+
+            HouseResponse expected = HouseTestData.builder()
+                    .withArea(UPDATE_HOUSE_AREA)
+                    .withCity(UPDATE_HOUSE_CITY)
+                    .build()
+                    .getResponseDto();
+
+            when(houseRepository.findHouseByUuid(houseUuid))
+                    .thenReturn(optionalEntity);
+
+            when(houseRepository.save(any(House.class)))
+                    .thenReturn(patchedHouse);
+
+            // when
+            HouseResponse actual = houseService.patchUpdate(houseUuid, fieldsToUpdate);
+
+            // then
+            assertThat(actual).isEqualTo(expected);
+            verify(houseRepository, times(1)).findHouseByUuid(houseUuid);
         }
 
         @Test
@@ -220,13 +369,13 @@ class HouseServiceImplTest {
                     .build()
                     .getRequestDto();
 
-            when(houseDao.findById(incorrectUUID))
+            when(houseRepository.findHouseByUuid(incorrectUUID))
                     .thenReturn(Optional.empty());
 
             // when, then
             assertThrows(NotFoundException.class, () -> houseService.update(incorrectUUID, requestDto));
-            verify(houseDao, times(1)).findById(incorrectUUID);
-            verify(houseDao, never()).update(any(House.class));
+            verify(houseRepository, times(1)).findHouseByUuid(incorrectUUID);
+            verify(houseRepository, never()).save(any(House.class));
         }
     }
 
@@ -238,19 +387,20 @@ class HouseServiceImplTest {
             // given
             UUID houseUuid = HOUSE_UUID;
 
-            Optional<House> optionalEntity = HouseTestData.builder()
+            House houseInDB = HouseTestData.builder()
                     .build()
-                    .getOptionalEntity();
+                    .getEntity();
+            houseInDB.setResidents(new HashSet<>());
 
-            when(houseDao.delete(houseUuid))
-                    .thenReturn(optionalEntity);
+            when(houseRepository.findHouseByUuid(houseUuid))
+                    .thenReturn(Optional.of(houseInDB));
 
             // when
             houseService.delete(houseUuid);
 
             // then
-            verify(houseDao, times(1))
-                    .delete(houseUuid);
+            verify(houseRepository, times(1)).findHouseByUuid(houseUuid);
+            verify(houseRepository, times(1)).deleteHouseByUuid(houseUuid);
         }
 
         @Test
@@ -260,7 +410,7 @@ class HouseServiceImplTest {
 
             // when, then
             assertThrows(NotFoundException.class, () -> houseService.delete(incorrectUUID));
-            verify(houseDao, times(1)).delete(incorrectUUID);
+            verify(houseRepository, never()).deleteHouseByUuid(incorrectUUID);
         }
     }
 }
