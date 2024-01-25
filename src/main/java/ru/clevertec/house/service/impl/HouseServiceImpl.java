@@ -50,7 +50,7 @@ public class HouseServiceImpl implements HouseService {
                 .map(houseMapper::toResponse)
                 .orElseThrow(() -> NotFoundException.of(House.class, uuid));
 
-        log.info("House method findById {}", response);
+        log.info("HouseService method findById {}", response);
 
         return response;
     }
@@ -67,7 +67,7 @@ public class HouseServiceImpl implements HouseService {
         Page<HouseResponse> response = houseRepository.findAll(pageable)
                 .map(houseMapper::toResponse);
 
-        log.info("House method findAll {}", response.stream().count());
+        log.info("HouseService method findAll {}", response.stream().count());
 
         return response;
     }
@@ -88,7 +88,7 @@ public class HouseServiceImpl implements HouseService {
         Page<HouseResponse> responses = houseRepository.findByHouseHistoriesPersonUuidAndHouseHistoriesType(personId, typePerson, pageable)
                 .map(houseMapper::toResponse);
 
-        log.info("House method findHousesWhichSomeTimeLivesPerson {}", responses.stream().count());
+        log.info("HouseService method findHousesWhichSomeTimeLivesPerson {}", responses.stream().count());
 
         return responses;
     }
@@ -107,7 +107,7 @@ public class HouseServiceImpl implements HouseService {
         Page<HouseResponse> responses = houseRepository.findByOwnersUuid(personId, pageable)
                 .map(houseMapper::toResponse);
 
-        log.info("House method findHousesWhichOwnPerson {}", responses.stream().count());
+        log.info("HouseService method findHousesWhichOwnPerson {}", responses.stream().count());
 
         return responses;
     }
@@ -128,7 +128,7 @@ public class HouseServiceImpl implements HouseService {
         Page<HouseResponse> responses = houseRepository.findByHouseHistoriesPersonUuidAndHouseHistoriesType(personId, typePerson, pageable)
                 .map(houseMapper::toResponse);
 
-        log.info("House method findHousesWhichSomeTimeOwnPerson {}", responses.stream().count());
+        log.info("HouseService method findHousesWhichSomeTimeOwnPerson {}", responses.stream().count());
 
         return responses;
     }
@@ -147,7 +147,7 @@ public class HouseServiceImpl implements HouseService {
         Page<HouseResponse> responses = houseRepository.findHousesFullTextSearch(searchTerm, pageable)
                 .map(houseMapper::toResponse);
 
-        log.info("House method findHousesFullTextSearch {}", responses.stream().count());
+        log.info("HouseService method findHousesFullTextSearch {}", responses.stream().count());
 
         return responses;
     }
@@ -168,7 +168,7 @@ public class HouseServiceImpl implements HouseService {
         House savedHouse = houseRepository.save(houseToSave);
 
         HouseResponse responseHouse = houseMapper.toResponse(savedHouse);
-        log.info("House method save {}", responseHouse);
+        log.info("HouseService method save {}", responseHouse);
 
         return responseHouse;
     }
@@ -199,7 +199,7 @@ public class HouseServiceImpl implements HouseService {
         House updatedHouse = houseRepository.save(houseToUpdate);
 
         HouseResponse response = houseMapper.toResponse(updatedHouse);
-        log.info("House method update {}", response);
+        log.info("HouseService method update {}", response);
 
         return response;
     }
@@ -240,7 +240,7 @@ public class HouseServiceImpl implements HouseService {
             House updatedHouse = houseRepository.save(house);
             HouseResponse response = houseMapper.toResponse(updatedHouse);
 
-            log.info("Person method patch {}", response);
+            log.info("HouseService method patchUpdate {}", response);
 
             return response;
         } else {
@@ -270,6 +270,6 @@ public class HouseServiceImpl implements HouseService {
 
             houseRepository.deleteHouseByUuid(uuid);
         }
-        log.info("House method delete {}", houseInDB);
+        log.info("HouseService method delete {}", houseInDB);
     }
 }

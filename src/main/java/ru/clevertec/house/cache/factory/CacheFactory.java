@@ -9,6 +9,11 @@ import ru.clevertec.house.cache.Cache;
 @ConditionalOnProperty(prefix = "spring.cache", name = "algorithm")
 public abstract class CacheFactory {
 
+    /**
+     * Creates the {@link Cache} object, which defines the algorithm for working with the cache.
+     *
+     * @return object {@link Cache} containing caching logic.
+     */
     @Lookup
     public abstract Cache<Object, Object> getCacheAlgorithm();
 }

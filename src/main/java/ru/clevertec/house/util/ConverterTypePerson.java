@@ -10,6 +10,12 @@ import ru.clevertec.house.exception.ValidationException;
 @Converter
 public class ConverterTypePerson implements AttributeConverter<TypePerson, Integer> {
 
+    /**
+     * Converts a type person to a number.
+     *
+     * @param attribute  the entity attribute value to be converted.
+     * @return the number corresponding to the type.
+     */
     @Override
     public Integer convertToDatabaseColumn(TypePerson attribute) {
         return switch (attribute) {
@@ -18,6 +24,12 @@ public class ConverterTypePerson implements AttributeConverter<TypePerson, Integ
         };
     }
 
+    /**
+     *Converts a number to a type person.
+     *
+     * @param dbData  the data from the database column to be converted.
+     * @return TypePerson corresponding to the number.
+     */
     @Override
     public TypePerson convertToEntityAttribute(Integer dbData) {
         return switch (dbData) {

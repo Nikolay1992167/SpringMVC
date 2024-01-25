@@ -15,6 +15,12 @@ import ru.clevertec.house.exception.NotFoundException;
 @RequiredArgsConstructor
 public class ControllerAdvice {
 
+    /**
+     * Handles {@link NotFoundException} and returns a 404 Not Found response with an error message.
+     *
+     * @param exception The NotFoundException to handle.
+     * @return A ResponseEntity containing an {@link IncorrectData} object and a 404 status code.
+     */
     @ExceptionHandler
     public ResponseEntity<IncorrectData> handleNotFoundException(NotFoundException exception) {
 
@@ -26,6 +32,12 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(incorrectData);
     }
 
+    /**
+     * Handles {@link Throwable exception} and returns a 500 SERVER ERROR response with an error message.
+     *
+     * @param exception The Throwable to handle.
+     * @return A ResponseEntity containing an {@link IncorrectData} object and a 500 status code.
+     */
     @ExceptionHandler
     public ResponseEntity<IncorrectData> handleThrowable(Throwable exception) {
 
@@ -37,6 +49,12 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(incorrectData);
     }
 
+    /**
+     * Handles {@link CheckEmptyException} and returns a 400 BAD REQUEST response with an error message.
+     *
+     * @param exception The CheckEmptyException to handle.
+     * @return A ResponseEntity containing an {@link IncorrectData} object and a 400 status code.
+     */
     @ExceptionHandler
     public ResponseEntity<IncorrectData> handleCheckEmptyException(CheckEmptyException exception) {
 
@@ -48,6 +66,12 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(incorrectData);
     }
 
+    /**
+     * Handles {@link HouseNotEmptyException} and returns a 400 CLIENT ERROR response with an error message.
+     *
+     * @param exception The HouseNotEmptyException to handle.
+     * @return A ResponseEntity containing an {@link IncorrectData} object and a 409 status code.
+     */
     @ExceptionHandler
     public ResponseEntity<IncorrectData> handleHouseNotEmptyException(HouseNotEmptyException exception) {
 

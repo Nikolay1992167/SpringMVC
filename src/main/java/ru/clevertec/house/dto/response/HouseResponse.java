@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static ru.clevertec.house.util.Constants.PATTERN_FOR_DATA;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,6 +24,6 @@ public class HouseResponse {
     private String street;
     private Integer number;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = PATTERN_FOR_DATA)
     private LocalDateTime createDate;
 }

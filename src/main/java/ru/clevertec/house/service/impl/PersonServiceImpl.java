@@ -58,7 +58,7 @@ public class PersonServiceImpl implements PersonService {
                 .map(personMapper::toResponse)
                 .orElseThrow(() -> NotFoundException.of(Person.class, uuid));
 
-        log.info("Person method finById {}", personResponse);
+        log.info("PersonService method finById {}", personResponse);
 
         return personResponse;
     }
@@ -75,7 +75,7 @@ public class PersonServiceImpl implements PersonService {
         Page<PersonResponse> responses = personRepository.findAll(pageable)
                 .map(personMapper::toResponse);
 
-        log.info("Person method findAll {}", responses.stream().count());
+        log.info("PersonService method findAll {}", responses.stream().count());
 
         return responses;
     }
@@ -94,7 +94,7 @@ public class PersonServiceImpl implements PersonService {
         Page<PersonResponse> response = personRepository.findAllByHouseUuid(houseId, pageable)
                 .map(personMapper::toResponse);
 
-        log.info("Person method findPersonsWhichLiveInHouse {}", response.stream().count());
+        log.info("PersonService method findPersonsWhichLiveInHouse {}", response.stream().count());
 
         return response;
     }
@@ -115,7 +115,7 @@ public class PersonServiceImpl implements PersonService {
         Page<PersonResponse> responses = personRepository.findByPersonHouseHistoriesHouseUuidAndPersonHouseHistoriesType(houseId, typePerson, pageable)
                 .map(personMapper::toResponse);
 
-        log.info("Person method findPersonsWhichSomeTimeLiveInHouse {}", responses.stream().count());
+        log.info("PersonService method findPersonsWhichSomeTimeLiveInHouse {}", responses.stream().count());
 
         return responses;
     }
@@ -136,7 +136,7 @@ public class PersonServiceImpl implements PersonService {
         Page<PersonResponse> responses = personRepository.findByPersonHouseHistoriesHouseUuidAndPersonHouseHistoriesType(houseId, typePerson, pageable)
                 .map(personMapper::toResponse);
 
-        log.info("Person method findPersonsWhichSomeTimeOwnHouse {}", responses.stream().count());
+        log.info("PersonService method findPersonsWhichSomeTimeOwnHouse {}", responses.stream().count());
 
         return responses;
     }
@@ -155,7 +155,7 @@ public class PersonServiceImpl implements PersonService {
         Page<PersonResponse> responses = personRepository.findPersonsFullTextSearch(searchTerm, pageable)
                 .map(personMapper::toResponse);
 
-        log.info("Person method findPersonsFullTextSearch {}", responses.stream().count());
+        log.info("PersonService method findPersonsFullTextSearch {}", responses.stream().count());
 
         return responses;
     }
@@ -206,7 +206,7 @@ public class PersonServiceImpl implements PersonService {
 
         Person saved = personRepository.save(personToSave);
         PersonResponse response = personMapper.toResponse(saved);
-        log.info("Person method save {}", response);
+        log.info("PersonService method save {}", response);
 
         return response;
     }
@@ -238,7 +238,7 @@ public class PersonServiceImpl implements PersonService {
 
         Person updated = personRepository.save(personToUpdate);
         PersonResponse response = personMapper.toResponse(updated);
-        log.info("Person method update {}", response);
+        log.info("PersonService method update {}", response);
 
         return response;
     }
@@ -281,7 +281,7 @@ public class PersonServiceImpl implements PersonService {
             });
             Person updated = personRepository.save(person);
             PersonResponse response = personMapper.toResponse(updated);
-            log.info("Person method patch {}", response);
+            log.info("PersonService method patchUpdate {}", response);
 
             return response;
         } else {
@@ -306,7 +306,7 @@ public class PersonServiceImpl implements PersonService {
             personRepository.deletePersonByUuid(uuid);
         }
 
-        log.info("Person method delete {}", personInDB);
+        log.info("PersonService method delete {}", personInDB);
     }
 
     private House getHouse(PersonRequest personRequest) {
