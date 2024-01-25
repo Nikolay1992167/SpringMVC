@@ -1,82 +1,42 @@
-### Task - Hibernate
+### Task - Spring Boot
 
-* Проект разработан на основе Spring Framework. В нем используются конфигурационные классы ApplicationConfig.java,
+* Проект разработан на основе Spring Boot Framework. В нем уже не используются конфигурационные классы ApplicationConfig.java,
 * DatabaseConfig.java, DispatcherInitializer.java, HibernateConfig.java, JdbcConfig.java, LiquibaseConfig.java и 
-* WebMvcConfig.java для настройки контекста приложения. В проекте предусмотрена MVC архитектура. Для пояснения функциональность
+* WebMvcConfig.java для настройки контекста приложения, так как всё ушло под капот. Для пояснения функциональность
 * оформлены javadoc.
-* Согласно условиям задания в проекте создано 2 сущности House и Person.
-* House:
-1. Содержит поля id, uuid, area, country, city, street, number, create_date.
-2. Может иметь множество жильцов(0-n), что устанавливается полем residents.
-3. У House может быть множество владельцев(0-n), что устанавливается полем owners.
-4. create_date устанавливается один раз при создании с помощью HouseListener.
-* Person:
-1. Содержит поля id, uuid, name, surname, sex, passport, create_date, update_date. Поле passport является вложенной
-* сущностью, которая содержит требуемые заданием поля passport_series, passport_number.
-2. Выполнено требование, согласно которому Person обязан жить в одном доме и не может быть бездомным (поле house).
-3. Person может владеть множеством домов, что устанавливается полем ownedHouses.
-4. Обеспечивается требование уникальности полей passport_series и passport_number.
-5. Поле sex имеет два значения Male или Female.
-6. Все связи между таблицами обеспечены посредством id.
-7. Не возвращаются id пользователю сервисом, возвращается uuid.
-8. create_date устанавливается один раз при создании с помощью PersonListener.
-9. update_date устанавливается при создании и изменяется каждый раз, когда меняется информация о Person. При этом, если 
-* запрос не изменяет информации, поле не должно обновляться. Это обеспечено также с помощью PersonListener.
-* Проект предоставляет REST API для выполнения следующих операций согласно требованиям задания:
-*    a) CRUD для House
-*        - в Get запросах не выводится информация о Person.
-*    б) CRUD для Person
-*        - в Get запросах не выводится информация о House(выводится только uuid).
-*    в) для Get запросов используется pagination (по умолчанию 15). Пагинация осуществлена посредствам функционала Query.
-* В проекте используется конфигурационный файл типа .yml. Создано 2 файла application-dev.yml и application-prod.yml с целью 
-* обеспечить 2 типа конфигурации в проекте dev и prod. Выбор осуществляется указанием -Dspring.profiles.active=prod в 
-* Edit Configurations -> VM Options.
-* Скрипты для создания таблиц расположены в resources/db.changelog. Добавлена миграция баз данных посредствам Liquibase.
-* В проекте JSON используется в качестве формата сообщений связи клиент-сервер.
-* Реализован удобный механизм обработки ошибок/исключений. В проекте обработаны ошибки со статус кодами 404 и 500.
-````json
-[
-  {
-    "errorMessage": "Request method 'POST' is not supported",
-    "errorCode": "500 INTERNAL_SERVER_ERROR"
-  },
-  {
-    "errorMessage": "Person with 9aa78d35-fb66-45a6-8570-0f81513ef827 not found!",
-    "errorCode": "404 NOT_FOUND"
-  }
-]
-````
-* В проекте согласно требованиям условия, о необходимости использовать репозитория с JdbcTemplate, я включил сюда также 
-* следующие задания:
-*   1. Get запрос для всех Person проживающих в House.
-*   2. Get запрос для всех House, владельцем которых является Person.
-*   3. Полнотекстовый поиск (любое текстовое поле) для House.
-*   4. Полнотекстовый поиск (любое текстовое поле) для Person.
-* Мной создан репозиторий GetDao, в котором реализована функциональность 4-х методов согласно заданию c использованием 
-* JdbcTemplate и RowMappers для House и Person. Следующий промежуточный слой обработки реализован в JdbcService, а методы 
-* для запросов реализованы в HouseController и PersonController. Соглашусь что название репозитория ещё нужно продумать.
-* При реализации методов сохранения объектов House и Person, пришёл к тому что при добавлении новых объектов в списки 
-* residents и owners House и список ownedHouses Person есть проблема создания новых сущностей, так как мы не используем 
-* id, а uuid создаётся в при сохранении в базу данных. Как это решить пока не знаю.
-* Пока не реализовал последнее задание ** PATH для Person и House.
+* Согласно условиям задания в проекте:
+* 1. Добавлена сущность HouseHistory, содержащая поля id, house, person, date, type. type может иметь 2 значения 
+* [OWNER, TENANT]. Для данного типа создаём свой тип данных в БД. В коде представлен Enum.
+* 2. Добавлена функциональность добавления записи в HouseHistory[type=TENANT], c текущей датой при смене жительства.
+* 3. Добавлена функциональность добавления записи в HouseHistory[type=OWNER], c текущей датой при смене владельца.
+* 4. Возможность выполнять 2 предыдущих пункта реализована с помощью триггеров в базе данных.
+* 5. Добавлены новые changeset.
+* Также реализован триггер для добавления записи в HouseHistory при создании Person, это удобно, так как автоматически
+* подтягиваются записи при вставке данных в таблицу persons.
+* Уровни репозиториев в проекте реализованы посредством наследования от JpaRepository. Добавлены необходимые методы для 
+* реализации логики приложения. Почти все запросы написаны с использованием возможностей Spring Data JPA, кроме методов по
+* полнотекстовому поиску. Пока не получается. Также не во всех методах решена проблема n+1, в сборных методах не могу решить.
+* Добавлены методы: 
+* 1. GET для получения всех Person, когда-либо проживавших в доме.
+* 2. GET для получения всех Person, когда-либо владевших домом.
+* 3. GET для получения всех House, где проживал Person.
+* 4. GET для получения всех House, которыми когда-либо владел Person.
+* Добавлен кэш из задания по рефлексии на сервисный слой House и Person.
 
 ### Технологии применённые в проекте
 
 * Java 17
 * Gradle 8.1.1
-* Jakarta.validation-api:3.1.0-M1
-* Slf4j 2.0.11
+* Springframework.boot' version '3.2.1
+* Spring-boot-starter-data-jpa
+* Spring-boot-starter-web
+* spring-boot-starter-validation
 * Liquibase 4.25.1
-* Fasterxml.jackson 2.14.2
-* Spring-orm 6.1.2
-* Spring-webmvc 6.1.2
-* Hibernate-core 6.4.1.Final
-* HicariCP 5.0.1
+* Jackson-databind 2.14.2
 * Mapstruct 1.5.3.Final
 * Postgresql 42.6.0
-* Jakarta.servlet-api 6.0.0
-* Spring-test:6.1.2
-* H2database:h2 2.2.224
+* Testcontainers:postgresql 1.19.3
+* Spring-boot-starter-test
 * Assertj-core 3.24.2
 * Mockito-junit-jupiter 5.8.0
 
@@ -86,18 +46,17 @@
    [Intellij IDEA Ultimate](https://www.jetbrains.com/idea/download/), [Tomcat 10.1](https://tomcat.apache.org/download-10.cgi)
    and [Postgresql](https://www.postgresql.org/download/).
 2. В Postgresql вы должны создать базу данных houses.
-3. В зависимости от используемого профиля вы вводите в application.yml введите свои username и password для своей локальной 
-БД в строках №5, №6
-4. В настройках Intellij IDEA, Run -> Edit Configurations... вы должны установить Tomcat 10 и указать в VM Options тип 
-конфигурации -Dspring.profiles.active=prod или dev. 
-5. Скрипты по созданию таблиц и загрузке данных выполняются автоматически посредствам Liquibase.
-6. Приложение готово к работе.
+3. В зависимости от используемого профиля вы вводите в application.yml укажите тип профиля spring: profiles: active:-.
+Введите свои username и password в соответсвующий файл в строках №5, №6
+4. Скрипты по созданию таблиц и загрузке данных выполняются автоматически посредствам Liquibase.
+5. Приложение готово к работе.
 
-### Модульные тесты
+### Тесты
 
-1. Модульные тесты были написаны со 100% охватом сервисов.
-2. H2 используется для интеграционных тестов слоя Dao. Hibernate по умолчанию создает таблицы и заполняет их данными.
-3. Интеграционные тесты для dao также имеют 100% покрытие.
+1. Тесты были написаны со 100% охватом Service слоя.
+2. Также написаны интеграционные тесты для сервисов с тестовыми контейнерами.
+3. Добавлены тест с использованием Executor для проверки работы в многопоточной среде только для HouseService.
+* Но какой-то хрупкий тест получился.
 4. Вы можете запустить тесты для этого проекта, выполнив в корне проекта:
 ```
 ./gradlew test
@@ -118,7 +77,7 @@
     "city": "Ельск",
     "street": "Ленина",
     "number": 2,
-    "createDate": "2024-01-09T12:00:00:000"
+   "createDate":"2023-12-30T12:00:00:000"
 }
 ````
 * Bad Request example:
@@ -130,72 +89,250 @@
 ````
 
 * **GET findAll | Находит все House в базе данных согласно параметрам пагинации**
-* http://localhost:8080/houses?pageNumber=1&pageSize=2
+* http://localhost:8080/houses?page=0&size=2
 * Response example:
 ````json
-[
-   {
+{
+   "content": [
+      {
+         "uuid": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
+         "area": "Гомельская",
+         "country": "Беларусь",
+         "city": "Ельск",
+         "street": "Ленина",
+         "number": 2,
+         "createDate": "2023-12-30T12:00:00:000"
+      },
+      {
+         "uuid": "9724b9b8-216d-4ab9-92eb-e6e06029580d",
+         "area": "Гомельская",
+         "country": "Беларусь",
+         "city": "Мозырь",
+         "street": "Геологов",
+         "number": 15,
+         "createDate": "1998-08-12T12:00:00:000"
+      }
+   ],
+   "pageable": {
+      "pageNumber": 0,
+      "pageSize": 2,
+      "sort": {
+         "empty": true,
+         "sorted": false,
+         "unsorted": true
+      },
+      "offset": 0,
+      "paged": true,
+      "unpaged": false
+   },
+   "last": false,
+   "totalPages": 4,
+   "totalElements": 7,
+   "size": 2,
+   "number": 0,
+   "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+   },
+   "first": true,
+   "numberOfElements": 2,
+   "empty": false
+   }
+````
+
+* **GET findHousesWhichSomeTimeLivesPerson | Находит все House в которых когда-либо жил Person with personUUID**
+* http://localhost:8080/houses/sometimelives/922e0213-e543-48ef-b8cb-92592afd5100
+* Response example:
+````json
+{
+  "content": [
+    {
       "uuid": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
       "area": "Гомельская",
       "country": "Беларусь",
       "city": "Ельск",
       "street": "Ленина",
       "number": 2,
-      "createDate": "2024-01-09T12:00:00:000"
-   },
-   {
-      "uuid": "9724b9b8-216d-4ab9-92eb-e6e06029580d",
-      "area": "Гомельская",
-      "country": "Беларусь",
-      "city": "Мозырь",
-      "street": "Геологов",
-      "number": 15,
-      "createDate": "1998-08-12T12:00:00:000"
-   }
-]
+      "createDate": "2023-12-30T12:00:00:000"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 15,
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 1,
+  "size": 15,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
+  "first": true,
+  "numberOfElements": 1,
+  "empty": false
+}
 ````
 
-* **GET findHousesWhichOwnPerson | Находит все House в базе данных согласно personUUID**
-* http://localhost:8080/houses/owns/9aa78d35-fb66-45a6-8570-f81513ef8272
+* **GET findHousesWhichOwnPerson | Находит все House, которыми владеет Person with personUUID**
+* http://localhost:8080/houses/owns/63a1faca-a963-4d4b-bfb9-2dafaedc36fe
 * Response example:
 ````json
-[
-    {
-        "uuid": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
-        "area": "Гомельская",
-        "country": "Беларусь",
-        "city": "Ельск",
-        "street": "Ленина",
-        "number": 2,
-        "createDate": "2024-01-09T12:00:00:000"
-    }
-]
+{
+    "content": [
+        {
+            "uuid": "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
+            "area": "Бресткая",
+            "country": "Беларусь",
+            "city": "Пинск",
+            "street": "Весенняя",
+            "number": 5,
+            "createDate": "2003-03-18T12:00:00:000"
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 15,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 1,
+    "size": 15,
+    "number": 0,
+    "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+    },
+    "first": true,
+    "numberOfElements": 1,
+    "empty": false
+}
+````
+
+* **GET findHousesWhichSomeTimeOwnPerson | Находит все House, которыми когда-либо владел Person with personUUID**
+* http://localhost:8080/houses/sometimeowns/863db796-cf16-4c67-ad24-710d0d2f0341
+* Response example:
+````json
+{
+    "content": [
+        {
+            "uuid": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+            "area": "Минская",
+            "country": "Беларусь",
+            "city": "Смиловичи",
+            "street": "Победы",
+            "number": 12,
+            "createDate": "1985-06-06T12:00:00:000"
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 15,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 1,
+    "size": 15,
+    "number": 0,
+    "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+    },
+    "first": true,
+    "numberOfElements": 1,
+    "empty": false
+}
 ````
 
 * **GET findHousesFullTextSearch | Находит все House в базе данных согласно searchTerm**
 * http://localhost:8080/houses/fullsearch/ви
 * Response example:
 ````json
-[
+{
+  "content": [
     {
-        "uuid": "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
-        "area": "Гомельская",
-        "country": "Беларусь",
-        "city": "Калинковичи",
-        "street": "Советская",
-        "number": 8,
-        "createDate": "2005-11-15T12:00:00:000"
+      "uuid": "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
+      "area": "Гомельская",
+      "country": "Беларусь",
+      "city": "Калинковичи",
+      "street": "Советская",
+      "number": 8,
+      "createDate": "2005-11-15T12:00:00:000"
     },
     {
-        "uuid": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
-        "area": "Минская",
-        "country": "Беларусь",
-        "city": "Смиловичи",
-        "street": "Победы",
-        "number": 12,
-        "createDate": "1985-06-06T12:00:00:000"
+      "uuid": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+      "area": "Минская",
+      "country": "Беларусь",
+      "city": "Смиловичи",
+      "street": "Победы",
+      "number": 12,
+      "createDate": "1985-06-06T12:00:00:000"
+    },
+    {
+      "uuid": "4b7d1a13-c0e9-4bb2-b280-a55cbc13ec37",
+      "area": "Минская",
+      "country": "Республика Беларусь",
+      "city": "Минск",
+      "street": "Независимости",
+      "number": 3,
+      "createDate": "2024-01-24T12:45:32:336"
     }
-]
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 15,
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 3,
+  "size": 15,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
+  "first": true,
+  "numberOfElements": 3,
+  "empty": false
+}
 ````
 
 * **POST save | Сохраняет один House**
@@ -213,18 +350,18 @@
 * Response example:
 ````json
 {
-    "uuid": "29e57309-1424-49bc-96a0-16ee41129102",
-    "area": "Могилевская",
-    "country": "Беларусь",
-    "city": "Бобруйск",
-    "street": "Минская",
-    "number": 19,
-    "createDate": "2024-01-14T22:09:57:823"
+  "uuid": "3193f8d7-7501-4771-888b-6963977b4b55",
+  "area": "Могилевская",
+  "country": "Беларусь",
+  "city": "Бобруйск",
+  "street": "Минская",
+  "number": 19,
+  "createDate": "2024-01-25T17:50:45:565"
 }
 ````
 
 * **PUT update | Обновляет один House в базе данных по uuid**
-* http://localhost:8080/houses/c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13
+* http://localhost:8080/houses/e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15
 * Request example:
 ````json
 {
@@ -238,13 +375,35 @@
 * Response example:
 ````json
 {
-  "uuid": "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
+  "uuid": "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
   "area": "Витебская",
   "country": "Беларусь",
   "city": "Орша",
   "street": "Минская",
   "number": 10,
-  "createDate": "2005-11-15T12:00:00:000"
+  "createDate": "2003-03-18T12:00:00:000"
+}
+````
+
+* **PATCH update | Обновляет данные одного House в базе данных по uuid**
+* http://localhost:8080/houses/9724b9b8-216d-4ab9-92eb-e6e06029580d
+* Request example:
+````json
+{
+   "street": "Северная",
+   "number": 126
+}
+````
+* Response example:
+````json
+{
+   "uuid": "9724b9b8-216d-4ab9-92eb-e6e06029580d",
+   "area": "Гомельская",
+   "country": "Беларусь",
+   "city": "Мозырь",
+   "street": "Северная",
+   "number": 126,
+   "createDate": "1998-08-12T12:00:00:000"
 }
 ````
 
@@ -258,17 +417,17 @@
 * Response example:
 ````json
 {
-   "uuid": "9aa78d35-fb66-45a6-8570-f81513ef8272",
-   "name": "Марина",
-   "surname": "Громкая",
-   "sex": "FEMALE",
-   "passport": {
-      "series": "HB",
-      "number": "123456"
-   },
-   "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
-   "createDate": "2022-03-06T10:00:00:000",
-   "updateDate": "2022-03-06T10:00:00:000"
+  "uuid": "9aa78d35-fb66-45a6-8570-f81513ef8272",
+  "name": "Марина",
+  "surname": "Громкая",
+  "sex": "FEMALE",
+  "passport": {
+    "series": "HB",
+    "number": "123456"
+  },
+  "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
+  "createDate": "2022-03-06T10:00:00:000",
+  "updateDate": "2022-03-06T10:00:00:000"
 }
 ````
 * Bad Request example:
@@ -280,121 +439,309 @@
 ````
 
 * **GET findAll | Находит все Person в базе данных согласно параметрам пагинации**
-* http://localhost:8080/persons?pageNumber=1&pageSize=3
+* http://localhost:8080/persons?page=0&size=3
 * Response example:
 ````json
-[
-   {
+{
+  "content": [
+    {
       "uuid": "9aa78d35-fb66-45a6-8570-f81513ef8272",
       "name": "Марина",
       "surname": "Громкая",
       "sex": "FEMALE",
       "passport": {
-         "series": "HB",
-         "number": "123456"
+        "series": "HB",
+        "number": "123456"
       },
       "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
       "createDate": "2022-03-06T10:00:00:000",
       "updateDate": "2022-03-06T10:00:00:000"
-   },
-   {
+    },
+    {
       "uuid": "922e0213-e543-48ef-b8cb-92592afd5100",
       "name": "Иван",
       "surname": "Рогозин",
       "sex": "MALE",
       "passport": {
-         "series": "HM",
-         "number": "234567"
+        "series": "HM",
+        "number": "234567"
       },
       "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
       "createDate": "2022-01-07T16:00:00:000",
       "updateDate": "2022-01-07T16:00:00:000"
-   },
-   {
+    },
+    {
       "uuid": "00cc3880-2e7a-47a8-b688-91e9565e972d",
       "name": "Женя",
       "surname": "Древко",
       "sex": "MALE",
       "passport": {
-         "series": "WE",
-         "number": "345678"
+        "series": "WE",
+        "number": "345678"
       },
       "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
       "createDate": "2022-09-08T17:00:00:000",
       "updateDate": "2022-09-08T17:00:00:000"
-   }
-]
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 3,
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": false,
+  "totalPages": 4,
+  "totalElements": 10,
+  "size": 3,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
+  "first": true,
+  "numberOfElements": 3,
+  "empty": false
+}
 ````
 
-* **GET findPersonWhichLiveInHouse | Находит всеx Person в базе данных согласно houseUUID**
-* http://localhost:8080/persons/lives/0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6
+* **GET findPersonsWhichLiveInHouse | Находит всеx Person, которые живут в House c houseUUID**
+* http://localhost:8080/persons/lives/d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14
 * Response example:
 ````json
-[
-   {
-      "uuid": "9aa78d35-fb66-45a6-8570-f81513ef8272",
-      "name": "Марина",
-      "surname": "Громкая",
-      "sex": "FEMALE",
-      "passport": {
-         "series": "HB",
-         "number": "123456"
+{
+   "content": [
+      {
+         "uuid": "3df38f0a-09bb-4bbc-a80c-2f827b6f9d75",
+         "name": "Игорь",
+         "surname": "Гнедов",
+         "sex": "MALE",
+         "passport": {
+            "series": "HP",
+            "number": "890123"
+         },
+         "houseUUID": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+         "createDate": "2022-04-13T22:00:00:000",
+         "updateDate": "2022-04-13T22:00:00:000"
       },
-      "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
-      "createDate": "2022-03-06T10:00:00:000",
-      "updateDate": "2022-03-06T10:00:00:000"
+      {
+         "uuid": "f188d7be-146b-4668-a729-09a2d4fdc784",
+         "name": "Егор",
+         "surname": "Калина",
+         "sex": "MALE",
+         "passport": {
+            "series": "MN",
+            "number": "789012"
+         },
+         "houseUUID": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+         "createDate": "2021-01-12T21:00:00:000",
+         "updateDate": "2024-01-24T12:51:04:123"
+      }
+   ],
+   "pageable": {
+      "pageNumber": 0,
+      "pageSize": 15,
+      "sort": {
+         "empty": true,
+         "sorted": false,
+         "unsorted": true
+      },
+      "offset": 0,
+      "paged": true,
+      "unpaged": false
    },
-   {
-      "uuid": "922e0213-e543-48ef-b8cb-92592afd5100",
-      "name": "Иван",
-      "surname": "Рогозин",
-      "sex": "MALE",
-      "passport": {
-         "series": "HM",
-         "number": "234567"
-      },
-      "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
-      "createDate": "2022-01-07T16:00:00:000",
-      "updateDate": "2022-01-07T16:00:00:000"
+   "last": true,
+   "totalPages": 1,
+   "totalElements": 2,
+   "size": 15,
+   "number": 0,
+   "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
    },
-   {
-      "uuid": "00cc3880-2e7a-47a8-b688-91e9565e972d",
-      "name": "Женя",
-      "surname": "Древко",
-      "sex": "MALE",
-      "passport": {
-         "series": "WE",
-         "number": "345678"
-      },
-      "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
-      "createDate": "2022-09-08T17:00:00:000",
-      "updateDate": "2022-09-08T17:00:00:000"
-   }
-]
+   "first": true,
+   "numberOfElements": 2,
+   "empty": false
+}
 ````
+
+* **GET findPersonsWhichSomeTimeLiveInHouse | Находит всеx Person, которые когда-либо проживали в House c houseUUID**
+* http://localhost:8080/persons/sometimelives/e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15
+* Response example:
+````json
+{
+    "content": [
+        {
+            "uuid": "63a1faca-a963-4d4b-bfb9-2dafaedc36fe",
+            "name": "Леня",
+            "surname": "Дудич",
+            "sex": "MALE",
+            "passport": {
+                "series": "HR",
+                "number": "901234"
+            },
+            "houseUUID": "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
+            "createDate": "2021-01-14T13:00:00:000",
+            "updateDate": "2021-01-14T13:00:00:000"
+        },
+        {
+            "uuid": "3df38f0a-09bb-4bbc-a80c-2f827b6f9d75",
+            "name": "Игорь",
+            "surname": "Гнедов",
+            "sex": "MALE",
+            "passport": {
+                "series": "HP",
+                "number": "890123"
+            },
+            "houseUUID": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+            "createDate": "2022-04-13T22:00:00:000",
+            "updateDate": "2022-04-13T22:00:00:000"
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 15,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 2,
+    "size": 15,
+    "number": 0,
+    "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+    },
+    "first": true,
+    "numberOfElements": 2,
+    "empty": false
+}
+````
+
+* **GET findPersonsWhichSomeTimeOwnHouse | Находит всеx Person, которые когда-либо владели House c houseUUID**
+* http://localhost:8080/persons/sometimeownes/e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15
+* Response example:
+````json
+{
+    "content": [
+        {
+            "uuid": "3df38f0a-09bb-4bbc-a80c-2f827b6f9d75",
+            "name": "Игорь",
+            "surname": "Гнедов",
+            "sex": "MALE",
+            "passport": {
+                "series": "HP",
+                "number": "890123"
+            },
+            "houseUUID": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+            "createDate": "2022-04-13T22:00:00:000",
+            "updateDate": "2022-04-13T22:00:00:000"
+        },
+        {
+            "uuid": "63a1faca-a963-4d4b-bfb9-2dafaedc36fe",
+            "name": "Леня",
+            "surname": "Дудич",
+            "sex": "MALE",
+            "passport": {
+                "series": "HR",
+                "number": "901234"
+            },
+            "houseUUID": "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
+            "createDate": "2021-01-14T13:00:00:000",
+            "updateDate": "2021-01-14T13:00:00:000"
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 15,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 2,
+    "size": 15,
+    "number": 0,
+    "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+    },
+    "first": true,
+    "numberOfElements": 2,
+    "empty": false
+}
+````
+
 
 * **GET findPersonsFullTextSearch | Находит все Person в базе данных согласно searchTerm**
 * http://localhost:8080/persons/fullsearch/ар
-* В данном ответе возвращается null из-за недостающей функциональности PersonRowMapper,
-потому что необходимо добавить способ вытянуть House по id указанному в таблице Persons. 
-Эту проблему я знаю, знаю где возникает и устраню.
 * Response example:
 ````json
-[
-   {
-      "uuid": "9aa78d35-fb66-45a6-8570-f81513ef8272",
-      "name": "Марина",
-      "surname": "Громкая",
-      "sex": "FEMALE",
-      "passport": {
-         "series": "HB",
-         "number": "123456"
+{
+   "content": [
+      {
+         "uuid": "9aa78d35-fb66-45a6-8570-f81513ef8272",
+         "name": "Марина",
+         "surname": "Громкая",
+         "sex": "FEMALE",
+         "passport": {
+            "series": "HB",
+            "number": "123456"
+         },
+         "houseUUID": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
+         "createDate": "2022-03-06T10:00:00:000",
+         "updateDate": "2022-03-06T10:00:00:000"
+      }
+   ],
+   "pageable": {
+      "pageNumber": 0,
+      "pageSize": 15,
+      "sort": {
+         "empty": true,
+         "sorted": false,
+         "unsorted": true
       },
-      "houseUUID": null,
-      "createDate": "2022-03-06T10:00:00:000",
-      "updateDate": "2022-03-06T10:00:00:000"
-   }
-]
+      "offset": 0,
+      "paged": true,
+      "unpaged": false
+   },
+   "last": true,
+   "totalPages": 1,
+   "totalElements": 1,
+   "size": 15,
+   "number": 0,
+   "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+   },
+   "first": true,
+   "numberOfElements": 1,
+   "empty": false
+}
 ````
 
 * **POST save | Сохраняет один Person**
@@ -402,19 +749,35 @@
 * Request example:
 ````json
 {
-   "name": "Михаил",
-   "surname": "Цалко",
+   "name": "Вася",
+   "surname": "Дудкин",
    "sex": "MALE",
    "passport": {
-      "series": "TY",
-      "number": "654456"
+      "series": "XB",
+      "number": "333852"
    },
    "houseUUID": "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
    "ownedHouses": [
       {
+         "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+         "area": "Минская",
+         "country": "Республика Беларусь",
+         "city": "Минск",
+         "street": "Независимости",
+         "number": 3
+      },
+      {
+         "uuid": "123e4567-e89b-12d3-a456-426614174000",
+         "area": "Могилёвская",
+         "country": "Республика Белаурсь",
+         "city": "Миоры",
+         "street": "Тверская",
+         "number": 2
+      },
+      {
          "uuid": "0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6",
          "area": "Гомельская",
-         "country": "Беларусь",
+         "country": "Республика Белаурсь",
          "city": "Ельск",
          "street": "Ленина",
          "number": 2
@@ -425,49 +788,75 @@
 * Response example:
 ````json
 {
-   "uuid": "e48e63ce-d0ef-4db2-bae5-f8b8cd43f5e1",
-   "name": "Михаил",
-   "surname": "Цалко",
+   "uuid": "a89e15da-dc68-4179-9512-e2bdf04c18b2",
+   "name": "Вася",
+   "surname": "Дудкин",
    "sex": "MALE",
    "passport": {
-      "series": "TY",
-      "number": "654456"
+      "series": "XB",
+      "number": "333852"
    },
    "houseUUID": "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
-   "createDate": "2024-01-14T23:31:17:972",
-   "updateDate": "2024-01-14T23:31:17:972"
+   "createDate": "2024-01-25T18:05:00:839",
+   "updateDate": "2024-01-25T18:05:00:839"
 }
 ````
 
 * **PUT update | Обновляет один Person в базе данных по uuid**
-* http://localhost:8080/persons/3df38f0a-09bb-4bbc-a80c-2f827b6f9d75
+* http://localhost:8080/persons/863db796-cf16-4c67-ad24-710d0d2f0341
 * Request example:
 ````json
 {
-   "name": "Иван",
-   "surname": "Мележ",
+   "name": "Женя",
+   "surname": "Миля",
    "sex": "MALE",
    "passport": {
-      "series": "BL",
-      "number": "654379"
+      "series": "BP",
+      "number": "894379"
    },
-   "houseUUID": "9724b9b8-216d-4ab9-92eb-e6e06029580d"
+   "houseUUID": "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15"
 }
 ````
 * Response example:
 ````json
 {
-   "uuid": "3df38f0a-09bb-4bbc-a80c-2f827b6f9d75",
-   "name": "Иван",
-   "surname": "Мележ",
+   "uuid": "863db796-cf16-4c67-ad24-710d0d2f0341",
+   "name": "Женя",
+   "surname": "Миля",
    "sex": "MALE",
    "passport": {
-      "series": "BL",
-      "number": "654379"
+      "series": "BP",
+      "number": "894379"
    },
-   "houseUUID": "9724b9b8-216d-4ab9-92eb-e6e06029580d",
-   "createDate": "2022-04-13T22:00:00:000",
-   "updateDate": "2024-01-14T22:32:36:259"
+   "houseUUID": "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
+   "createDate": "2023-05-11T11:00:00:000",
+   "updateDate": "2024-01-25T18:05:54:997"
+}
+````
+
+* **PATCH update | Обновляет данные одного Person в базе данных по uuid**
+* http://localhost:8080/persons/f188d7be-146b-4668-a729-09a2d4fdc784
+* Request example:
+````json
+{
+   "name":"Егор",
+   "sex":"MALE"
+}
+````
+* Response example:
+````json
+{
+   "uuid": "f188d7be-146b-4668-a729-09a2d4fdc784",
+   "name": "Егор",
+   "surname": "Калина",
+   "sex": "MALE",
+   "passport": {
+      "series": "MN",
+      "number": "789012"
+   },
+   "houseUUID": "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+   "createDate": "2021-01-12T21:00:00:000",
+   "updateDate": "2024-01-24T12:51:04:123"
 }
 ````
 

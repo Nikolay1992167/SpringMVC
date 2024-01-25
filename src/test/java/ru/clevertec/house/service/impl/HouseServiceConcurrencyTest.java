@@ -1,101 +1,72 @@
 package ru.clevertec.house.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
+import ru.clevertec.house.proxy.CacheAspectHouse;
+import util.HouseTestData;
 import util.PostgresqlTestContainer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static util.initdata.ConstantsForHouse.HOUSE_UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 public class HouseServiceConcurrencyTest extends PostgresqlTestContainer {
 
     private final HouseServiceImpl houseService;
 
+    @MockBean
+    private CacheAspectHouse cacheAspectHouse;
+
     @Test
-    public void checkHouseServiceWithExecutor() throws InterruptedException, ExecutionException {
+    public void testMultithreadedCache() throws InterruptedException {
 
-        ExecutorService executor = Executors.newFixedThreadPool(6);
+        ExecutorService executorService = Executors.newFixedThreadPool(6);
+        CountDownLatch latch = new CountDownLatch(6);
+        AtomicInteger counter = new AtomicInteger(0);
 
-        List<Callable<HouseResponse>> houseResponseTasks = new ArrayList<>();
-        List<Callable<Void>> deleteTasks = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            executorService.submit(() -> {
+                try {
+                    int count = counter.incrementAndGet();
 
-        Callable<HouseResponse> saveTask = () -> houseService.save(HouseRequest.builder()
-                .area("Гродненская")
-                .country("Беларусь")
-                .city("Островец")
-                .street("Атомная")
-                .number(86)
-                .build());
-        houseResponseTasks.add(saveTask);
+                    if (count == 1) {
+                        HouseRequest request = HouseTestData.builder().build().getRequestDto();
+                        HouseResponse response = houseService.save(request);
+                        log.info("Response: {}", response);
 
-        Callable<HouseResponse> findByIdTask = () -> houseService.findById(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"));
-        houseResponseTasks.add(findByIdTask);
+                    } else if (count >= 2 && count <= 4) {
+                        HouseResponse response = houseService.findById(HOUSE_UUID);
+                        log.info("Response: {}", response);
 
-        Callable<HouseResponse> findByIdTaskSecond = () -> houseService.findById(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"));
-        houseResponseTasks.add(findByIdTaskSecond);
+                    } else if (count == 5) {
+                        HouseRequest request = HouseTestData.builder().build().getRequestDto();
+                        HouseResponse response = houseService.update(HOUSE_UUID, request);
+                        log.info("Response: {}", response);
 
-        Callable<HouseResponse> updateTask = () -> houseService.update(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"),
-                HouseRequest.builder()
-                        .area("Гродненская")
-                        .country("Беларусь")
-                        .city("Берестовица")
-                        .street("Приграничная")
-                        .number(23)
-                        .build());
-        houseResponseTasks.add(updateTask);
+                    } else if (count == 6) {
+                        houseService.delete(HOUSE_UUID);
+                        log.info("Deleted");
+                    }
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
 
-        Callable<HouseResponse> findByIdTaskThird = () -> houseService.findById(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"));
-        houseResponseTasks.add(findByIdTaskThird);
-
-        Callable<Void> deleteTask = () -> {
-            houseService.delete(UUID.fromString("e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15"));
-            return null;
-        };
-        deleteTasks.add(deleteTask);
-
-        List<Future<HouseResponse>> houseResponseFutures = executor.invokeAll(houseResponseTasks);
-
-        HouseResponse savedHouse = houseResponseFutures.get(0).get();
-        HouseResponse foundHouse = houseResponseFutures.get(1).get();
-        HouseResponse foundHouseSecond = houseResponseFutures.get(2).get();
-        HouseResponse updatedHouse = houseResponseFutures.get(3).get();
-        HouseResponse foundHouseThird = houseResponseFutures.get(4).get();
-
-        assertThat(savedHouse).isNotNull();
-        assertThat(savedHouse.getArea()).isEqualTo("Гродненская");
-        assertThat(savedHouse.getCountry()).isEqualTo("Беларусь");
-
-        assertThat(foundHouse).isNotNull();
-        assertThat(foundHouse.getUuid()).isEqualTo(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"));
-
-        assertThat(foundHouseSecond).isNotNull();
-        assertThat(foundHouseSecond.getUuid()).isEqualTo(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"));
-
-        assertThat(updatedHouse).isNotNull();
-        assertThat(updatedHouse.getUuid()).isEqualTo(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"));
-        assertThat(updatedHouse.getArea()).isEqualTo("Гродненская");
-        assertThat(updatedHouse.getCountry()).isEqualTo("Беларусь");
-
-        assertThat(foundHouseThird).isNotNull();
-        assertThat(foundHouseThird.getUuid()).isEqualTo(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"));
-
-        List<Future<Void>> voidFutures = executor.invokeAll(deleteTasks);
-
-        Future<Void> voidFuture = voidFutures.get(0);
-        boolean delete = voidFuture.isDone();
-        assertThat(delete).isTrue();
-
-        executor.shutdown();
+        verify(cacheAspectHouse, times(3)).cacheGet(any());
     }
 }

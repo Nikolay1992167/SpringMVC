@@ -16,7 +16,6 @@ public class PostgresqlTestContainer {
 
     private final static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15.3");
 
-
     @DynamicPropertySource
     static void setUrl(DynamicPropertyRegistry registry) {
         container.start();

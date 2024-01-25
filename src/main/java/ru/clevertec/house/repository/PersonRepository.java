@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.TypePerson;
 
@@ -29,7 +28,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
     /**
      * Finds all {@link Person} entity by House's UUID, in which lives a Person.
      *
-     * @param houseId the UUID of the House entity.
+     * @param houseId  the UUID of the House entity.
      * @param pageable the {@link Pageable} which will be parameters for pagination.
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
@@ -39,8 +38,8 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
     /**
      * Finds all {@link Person} entity by House's UUID, which sometimes tenants or owners.
      *
-     * @param uuid the UUID of the House entity.
-     * @param type type person.
+     * @param uuid     the UUID of the House entity.
+     * @param type     type person.
      * @param pageable the {@link Pageable} which will be parameters for pagination.
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
@@ -51,7 +50,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * Finds all {@link Person} by the specified element.
      *
      * @param searchTerm the specified element for search.
-     * @param pageable the {@link Pageable} which will be parameters for pagination.
+     * @param pageable   the {@link Pageable} which will be parameters for pagination.
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
      */
