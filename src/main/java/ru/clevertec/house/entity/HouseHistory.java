@@ -1,7 +1,6 @@
 package ru.clevertec.house.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,14 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import ru.clevertec.house.enums.TypePerson;
-import ru.clevertec.house.util.ConverterTypePerson;
 
 import java.time.LocalDateTime;
 
@@ -46,7 +45,7 @@ public class HouseHistory {
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
-    @Convert(converter = ConverterTypePerson.class)
-    @Column(name = "type_id")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "person_type")
     private TypePerson type;
 }

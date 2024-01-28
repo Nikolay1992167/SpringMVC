@@ -2,8 +2,8 @@ CREATE OR REPLACE FUNCTION person_create_house_func() RETURNS TRIGGER
 LANGUAGE plpgsql AS
 $$
 BEGIN
-  INSERT INTO house_history (house_id, person_id, date, type_id)
-  VALUES (NEW.house_id, NEW.id, CURRENT_DATE, 2);
+  INSERT INTO house_history (house_id, person_id, date, person_type)
+  VALUES (NEW.house_id, NEW.id, CURRENT_DATE, 'TENANT');
   RETURN NEW;
 END;
 $$;
@@ -17,8 +17,8 @@ CREATE OR REPLACE FUNCTION person_change_house_func() RETURNS TRIGGER
 LANGUAGE plpgsql AS
 $$
 BEGIN
-  INSERT INTO house_history (house_id, person_id, date, type_id)
-  VALUES (NEW.house_id, NEW.id, CURRENT_DATE, 2);
+  INSERT INTO house_history (house_id, person_id, date, person_type)
+  VALUES (NEW.house_id, NEW.id, CURRENT_DATE, 'TENANT');
   RETURN NEW;
 END;
 $$;
