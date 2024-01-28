@@ -10,7 +10,7 @@ import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Passport;
 import ru.clevertec.house.enums.Sex;
 import ru.clevertec.house.exception.NotFoundException;
-import util.PostgresqlTestContainer;
+import util.PostgresSqlContainerInitializer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
 @RequiredArgsConstructor
-public class PersonServiceImplIT extends PostgresqlTestContainer {
+public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
 
     private final PersonServiceImpl personService;
 

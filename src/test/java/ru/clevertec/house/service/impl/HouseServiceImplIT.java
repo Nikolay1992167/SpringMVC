@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.exception.NotFoundException;
-import util.PostgresqlTestContainer;
+import util.PostgresSqlContainerInitializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
 @RequiredArgsConstructor
-public class HouseServiceImplIT extends PostgresqlTestContainer {
+public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
 
     private final HouseServiceImpl houseService;
 

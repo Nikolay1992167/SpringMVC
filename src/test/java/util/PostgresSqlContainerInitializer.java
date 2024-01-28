@@ -12,7 +12,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @Transactional
 @SpringBootTest
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class PostgresqlTestContainer {
+public class PostgresSqlContainerInitializer {
 
     private final static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15.3");
 

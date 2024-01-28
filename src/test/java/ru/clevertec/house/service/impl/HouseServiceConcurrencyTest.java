@@ -8,7 +8,7 @@ import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.proxy.CacheAspectHouse;
 import util.HouseTestData;
-import util.PostgresqlTestContainer;
+import util.PostgresSqlContainerInitializer;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +22,7 @@ import static util.initdata.ConstantsForHouse.HOUSE_UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-public class HouseServiceConcurrencyTest extends PostgresqlTestContainer {
+public class HouseServiceConcurrencyTest extends PostgresSqlContainerInitializer {
 
     private final HouseServiceImpl houseService;
 
