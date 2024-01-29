@@ -5,19 +5,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import ru.clevertec.house.entity.House;
-import ru.clevertec.house.entity.Passport;
 import ru.clevertec.house.entity.Person;
-import ru.clevertec.house.enums.Sex;
 import ru.clevertec.house.enums.TypePerson;
 import util.PostgresSqlContainerInitializer;
+import util.initdata.TestDataForPerson;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static util.initdata.ConstantsForPerson.PERSON_UUID;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_FOURTH_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_THIRD_IN_DB;
+import static util.initdata.TestDataForHouse.INCORRECT_UUID;
+import static util.initdata.TestDataForPerson.PERSON_UUID;
+import static util.initdata.TestDataForPerson.PERSON_UUID_TENTH_IN_DB;
 
 @RequiredArgsConstructor
 class PersonRepositoryTest extends PostgresSqlContainerInitializer {
@@ -32,26 +33,7 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         @Test
         void shouldReturnExpectedValue() {
             // given
-            Person expected = Person.builder()
-                    .id(1L)
-                    .uuid(UUID.fromString("9aa78d35-fb66-45a6-8570-f81513ef8272"))
-                    .name("Марина")
-                    .surname("Громкая")
-                    .sex(Sex.FEMALE)
-                    .passport(new Passport("HB", "123456"))
-                    .createDate(LocalDateTime.of(2022, 3, 6, 10, 0, 0))
-                    .updateDate(LocalDateTime.of(2022, 3, 6, 10, 0, 0))
-                    .house(House.builder()
-                            .id(1L)
-                            .uuid(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"))
-                            .area("Гомельская")
-                            .country("Беларусь")
-                            .city("Ельск")
-                            .street("Ленина")
-                            .number(2)
-                            .createDate(LocalDateTime.of(2023, 12, 30, 12, 0, 0))
-                            .build())
-                    .build();
+            Person expected = TestDataForPerson.getFirstPersonInDB();
 
             // when
             Person actual = personRepository.findPersonByUuid(expected.getUuid()).get();
@@ -87,7 +69,8 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnPageWithExpectedSize() {
             // given
             int expectedSize = 3;
-            UUID houseUuid = UUID.fromString("c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13");
+
+            UUID houseUuid = HOUSE_UUID_THIRD_IN_DB;
 
             // when
             Page<Person> actual = personRepository.findAllByHouseUuid(houseUuid, request);
@@ -100,7 +83,7 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnEmptyPage() {
             // given
             int expectedSize = 0;
-            UUID houseUuid = UUID.fromString("c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99");
+            UUID houseUuid = INCORRECT_UUID;
 
             // when
             Page<Person> actual = personRepository.findAllByHouseUuid(houseUuid, request);
@@ -117,7 +100,9 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnPageWithExpectedSize() {
             // given
             int expectedSize = 2;
-            UUID houseUuid = UUID.fromString("d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14");
+
+            UUID houseUuid = HOUSE_UUID_FOURTH_IN_DB;
+
             TypePerson typePerson = TypePerson.TENANT;
 
             // when
@@ -131,7 +116,7 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnEmptyPage() {
             // given
             int expectedSize = 0;
-            UUID houseUuid = UUID.fromString("d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55");
+            UUID houseUuid = INCORRECT_UUID;
             TypePerson typePerson = TypePerson.TENANT;
 
             // when
@@ -162,6 +147,7 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnEmptyPage() {
             // given
             int expectedSize = 0;
+
             String searchTerm = "Кондрат";
 
             // when
@@ -178,10 +164,11 @@ class PersonRepositoryTest extends PostgresSqlContainerInitializer {
         @Test
         void shouldDeleteExpectedValue() {
             // given
-            UUID personUuid = UUID.fromString("40291d40-5948-448c-b66a-d09591d3500f");
+            UUID personUuid = PERSON_UUID_TENTH_IN_DB;
 
             // when
             personRepository.deletePersonByUuid(personUuid);
+
             Optional<Person> actual = personRepository.findPersonByUuid(personUuid);
 
             // then

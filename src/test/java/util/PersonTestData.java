@@ -16,13 +16,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static util.initdata.ConstantsForPerson.PERSON_CREATE_DATE;
-import static util.initdata.ConstantsForPerson.PERSON_ID;
-import static util.initdata.ConstantsForPerson.PERSON_NAME;
-import static util.initdata.ConstantsForPerson.PERSON_SEX;
-import static util.initdata.ConstantsForPerson.PERSON_SURNAME;
-import static util.initdata.ConstantsForPerson.PERSON_UPDATE_DATE;
-import static util.initdata.ConstantsForPerson.PERSON_UUID;
+import static util.initdata.TestDataForPerson.PERSON_CREATE_DATE;
+import static util.initdata.TestDataForPerson.PERSON_ID;
+import static util.initdata.TestDataForPerson.PERSON_NAME;
+import static util.initdata.TestDataForPerson.PERSON_SEX;
+import static util.initdata.TestDataForPerson.PERSON_SURNAME;
+import static util.initdata.TestDataForPerson.PERSON_UPDATE_DATE;
+import static util.initdata.TestDataForPerson.PERSON_UUID;
 
 @Data
 @Builder(setterPrefix = "with")

@@ -4,8 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import ru.clevertec.house.entity.Passport;
 
-import static util.initdata.ConstantsForPassport.PASSPORT_NUMBER;
-import static util.initdata.ConstantsForPassport.PASSPORT_SERIES;
+import static util.initdata.TestDataForPassport.PASSPORT_NUMBER;
+import static util.initdata.TestDataForPassport.PASSPORT_SERIES;
 
 @Data
 @Builder(setterPrefix = "with")
@@ -17,7 +17,7 @@ public class PassportTestData {
     @Builder.Default
     String number = PASSPORT_NUMBER;
 
-    public Passport getPassport(){
+    public Passport getPassport() {
         return new Passport(series, number);
     }
 }

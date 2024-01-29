@@ -40,11 +40,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static util.initdata.ConstantsForHouse.HOUSE_UUID;
-import static util.initdata.ConstantsForHouse.INCORRECT_UUID;
-import static util.initdata.ConstantsForHouse.UPDATE_HOUSE_AREA;
-import static util.initdata.ConstantsForHouse.UPDATE_HOUSE_CITY;
-import static util.initdata.ConstantsForPerson.PERSON_UUID;
+import static util.initdata.TestDataForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.INCORRECT_UUID;
+import static util.initdata.TestDataForHouse.UPDATE_HOUSE_AREA;
+import static util.initdata.TestDataForHouse.UPDATE_HOUSE_CITY;
+import static util.initdata.TestDataForPerson.PERSON_UUID;
 
 @WebMvcTest(HouseController.class)
 class HouseControllerTest {
@@ -77,7 +77,7 @@ class HouseControllerTest {
                     .thenReturn(response);
 
             // when, then
-            mockMvc.perform(get(URL+ "/" + houseUuid))
+            mockMvc.perform(get(URL + "/" + houseUuid))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.uuid").value(houseUuid.toString()));
         }
@@ -213,7 +213,7 @@ class HouseControllerTest {
             when(houseService.findHousesWhichSomeTimeLivesPerson(personUuid, pageRequest))
                     .thenReturn(page);
 
-            mockMvc.perform(get( URL + "/sometimelives/" + personUuid + "?page=0&size=3"))
+            mockMvc.perform(get(URL + "/sometimelives/" + personUuid + "?page=0&size=3"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
         }

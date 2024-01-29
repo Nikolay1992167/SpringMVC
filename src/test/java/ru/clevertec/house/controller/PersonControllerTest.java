@@ -41,11 +41,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static util.initdata.ConstantsForHouse.HOUSE_UUID;
-import static util.initdata.ConstantsForHouse.INCORRECT_UUID;
-import static util.initdata.ConstantsForPerson.PERSON_UUID;
-import static util.initdata.ConstantsForPerson.UPDATE_PERSON_NAME;
-import static util.initdata.ConstantsForPerson.UPDATE_PERSON_SURNAME;
+import static util.initdata.TestDataForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.INCORRECT_UUID;
+import static util.initdata.TestDataForPerson.PERSON_UUID;
+import static util.initdata.TestDataForPerson.UPDATE_PERSON_NAME;
+import static util.initdata.TestDataForPerson.UPDATE_PERSON_SURNAME;
 
 @WebMvcTest(PersonController.class)
 class PersonControllerTest {

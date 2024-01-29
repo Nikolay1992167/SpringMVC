@@ -8,6 +8,7 @@ import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.exception.NotFoundException;
 import util.PostgresSqlContainerInitializer;
+import util.initdata.TestDataForHouse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,15 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_FIRST_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_FOURTH_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_SECOND_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_THIRD_IN_DB;
+import static util.initdata.TestDataForHouse.UPDATE_HOUSE_AREA;
+import static util.initdata.TestDataForHouse.UPDATE_HOUSE_NUMBER;
+import static util.initdata.TestDataForPerson.DEFAULT_PAGE_REQUEST_FOR_IT;
+import static util.initdata.TestDataForPerson.PERSON_UUID_FIRST_IN_DB;
+import static util.initdata.TestDataForPerson.PERSON_UUID_FOURTH_IN_DB;
 
 @RequiredArgsConstructor
 public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
@@ -24,7 +34,7 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnHouseResponseWhenFindById() {
         // given
-        UUID houseUuid = UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6");
+        UUID houseUuid = HOUSE_UUID_FIRST_IN_DB;
 
         // when
         HouseResponse response = houseService.findById(houseUuid);
@@ -37,7 +47,7 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfHouseResponseWhenFindAll() {
         // given
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
         // when
         Page<HouseResponse> response = houseService.findAll(pageRequest);
@@ -50,8 +60,8 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfHouseResponseWhichSomeTimeLivesPerson() {
         // given
-        UUID personUuid = UUID.fromString("9aa78d35-fb66-45a6-8570-f81513ef8272");
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        UUID personUuid = PERSON_UUID_FIRST_IN_DB;
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 1;
 
         // when
@@ -64,8 +74,8 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfHouseResponseWhichOwnPerson() {
         // given
-        UUID personUuid = UUID.fromString("9aa78d35-fb66-45a6-8570-f81513ef8272");
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        UUID personUuid = PERSON_UUID_FIRST_IN_DB;
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 1;
 
         // when
@@ -78,8 +88,8 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfHouseResponseWhichSomeTimeOwnPerson() {
         // given
-        UUID personUuid = UUID.fromString("24277f25-81ee-4925-885c-a639d0211dde");
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        UUID personUuid = PERSON_UUID_FOURTH_IN_DB;
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 1;
 
         // when
@@ -93,7 +103,7 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     void shouldReturnPageWithListOfHouseResponseFindWithFullTextSearch() {
         // given
         String searchTerm = "ин";
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 4;
 
         // when
@@ -106,13 +116,7 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnHouseResponseWhenSaveInDB() {
         // given
-        HouseRequest houseToSave = HouseRequest.builder()
-                .area("Гомельская")
-                .country("Республика Беларусь")
-                .city("Логойск")
-                .street("Лесная")
-                .number(8)
-                .build();
+        HouseRequest houseToSave = TestDataForHouse.getNewHouseForCreate();
 
         // when
         HouseResponse savedHouse = houseService.save(houseToSave);
@@ -129,14 +133,8 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnUpdatedHouseResponseWhenUpdateInDB() {
         // given
-        UUID houseUuid = UUID.fromString("d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14");
-        HouseRequest houseToUpdate = HouseRequest.builder()
-                .area("Витебская")
-                .country("Республика Беларусь")
-                .city("Полоцк")
-                .street("Промышленная")
-                .number(5)
-                .build();
+        UUID houseUuid = HOUSE_UUID_FOURTH_IN_DB;
+        HouseRequest houseToUpdate = TestDataForHouse.getHouseForUpdate();
 
         // when
         HouseResponse updatedHouse = houseService.update(houseUuid, houseToUpdate);
@@ -153,9 +151,9 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnUpdatedHouseResponseWhenPatchUpdateInDB() {
         // given
-        UUID houseUuid = UUID.fromString("c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13");
-        String area = "Витебская";
-        int number = 12;
+        UUID houseUuid = HOUSE_UUID_THIRD_IN_DB;
+        String area = UPDATE_HOUSE_AREA;
+        int number = UPDATE_HOUSE_NUMBER;
         Map<String, Object> fields = new HashMap<>();
         fields.put("area", area);
         fields.put("number", number);
@@ -172,7 +170,7 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldDeleteHouseInDB() {
         // given
-        UUID houseUuid = UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d");
+        UUID houseUuid = HOUSE_UUID_SECOND_IN_DB;
 
         // when
         houseService.delete(houseUuid);

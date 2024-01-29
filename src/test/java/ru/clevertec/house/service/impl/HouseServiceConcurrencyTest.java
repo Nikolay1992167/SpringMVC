@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static util.initdata.ConstantsForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.HOUSE_UUID;
 
 @Slf4j
 @RequiredArgsConstructor

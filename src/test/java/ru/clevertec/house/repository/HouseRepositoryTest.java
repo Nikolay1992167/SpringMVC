@@ -8,14 +8,18 @@ import org.springframework.data.domain.PageRequest;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.enums.TypePerson;
 import util.PostgresSqlContainerInitializer;
+import util.initdata.TestDataForHouse;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static util.initdata.ConstantsForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_SECOND_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_THIRD_IN_DB;
+import static util.initdata.TestDataForHouse.INCORRECT_UUID;
+import static util.initdata.TestDataForPerson.PERSON_UUID_SIXTH_IN_DB;
 
 @RequiredArgsConstructor
 class HouseRepositoryTest extends PostgresSqlContainerInitializer {
@@ -30,16 +34,7 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         @Test
         void shouldReturnExpectedValue() {
             // given
-            House expected = House.builder()
-                    .id(1L)
-                    .uuid(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"))
-                    .area("Гомельская")
-                    .country("Беларусь")
-                    .city("Ельск")
-                    .street("Ленина")
-                    .number(2)
-                    .createDate(LocalDateTime.of(2023, 12, 30, 12, 0, 0))
-                    .build();
+            House expected = TestDataForHouse.getFirstHouseInDB();
 
             // when
             House actual = houseRepository.findHouseByUuid(expected.getUuid()).get();
@@ -73,8 +68,9 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnListOfHouse() {
             // given
             int expectedSize = 2;
-            List<UUID> uuids = List.of(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"),
-                    UUID.fromString("c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13"));
+
+            List<UUID> uuids = List.of(HOUSE_UUID_SECOND_IN_DB,
+                    HOUSE_UUID_THIRD_IN_DB);
 
             // when
             List<House> actual = houseRepository.findAllByUuidIn(uuids);
@@ -103,7 +99,9 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnPageWithExpectedSize() {
             // given
             int expectedSize = 1;
-            UUID personUuid = UUID.fromString("863db796-cf16-4c67-ad24-710d0d2f0341");
+
+            UUID personUuid = PERSON_UUID_SIXTH_IN_DB;
+
             TypePerson typePerson = TypePerson.TENANT;
 
             // when
@@ -117,7 +115,9 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnEmptyPage() {
             // given
             int expectedSize = 0;
-            UUID personUuid = UUID.fromString("863db796-cf16-4c67-ad24-710d0d2f0342");
+
+            UUID personUuid = INCORRECT_UUID;
+
             TypePerson typePerson = TypePerson.TENANT;
 
             // when
@@ -135,7 +135,8 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnPageWithExpectedSize() {
             // given
             int expectedSize = 1;
-            UUID personUuid = UUID.fromString("863db796-cf16-4c67-ad24-710d0d2f0341");
+
+            UUID personUuid = PERSON_UUID_SIXTH_IN_DB;
 
             // when
             Page<House> actual = houseRepository.findByOwnersUuid(personUuid, request);
@@ -148,7 +149,8 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnEmptyPage() {
             // given
             int expectedSize = 0;
-            UUID personUuid = UUID.fromString("863db796-cf16-4c67-ad24-710d0d2f0342");
+
+            UUID personUuid = INCORRECT_UUID;
 
             // when
             Page<House> actual = houseRepository.findByOwnersUuid(personUuid, request);
@@ -165,6 +167,7 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnPageWithExpectedSize() {
             // given
             int expectedSize = 2;
+
             String searchTerm = "ви";
 
             // when
@@ -178,6 +181,7 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         void shouldReturnEmptyPage() {
             // given
             int expectedSize = 0;
+
             String searchTerm = "Нева";
 
             // when
@@ -194,10 +198,11 @@ class HouseRepositoryTest extends PostgresSqlContainerInitializer {
         @Test
         void shouldDeleteExpectedValue() {
             // given
-            UUID houseUuid = UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d");
+            UUID houseUuid = HOUSE_UUID_SECOND_IN_DB;
 
             // when
             houseRepository.deleteHouseByUuid(houseUuid);
+
             Optional<House> actual = houseRepository.findHouseByUuid(houseUuid);
 
             // then

@@ -6,19 +6,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
-import ru.clevertec.house.entity.House;
-import ru.clevertec.house.entity.Passport;
-import ru.clevertec.house.enums.Sex;
 import ru.clevertec.house.exception.NotFoundException;
 import util.PostgresSqlContainerInitializer;
+import util.initdata.TestDataForPerson;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_FIFTH_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_FOURTH_IN_DB;
+import static util.initdata.TestDataForHouse.HOUSE_UUID_THIRD_IN_DB;
+import static util.initdata.TestDataForPerson.DEFAULT_PAGE_REQUEST_FOR_IT;
+import static util.initdata.TestDataForPerson.PERSON_UUID_EIGHTH_IN_DB;
+import static util.initdata.TestDataForPerson.PERSON_UUID_NINTH_IN_DB;
+import static util.initdata.TestDataForPerson.PERSON_UUID_SECOND_IN_DB;
+import static util.initdata.TestDataForPerson.PERSON_UUID_TENTH_IN_DB;
+import static util.initdata.TestDataForPerson.UPDATE_PERSON_NAME;
+import static util.initdata.TestDataForPerson.UPDATE_PERSON_SURNAME;
 
 @RequiredArgsConstructor
 public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
@@ -28,7 +35,7 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPersonResponseWhenFindById() {
         // given
-        UUID personUuid = UUID.fromString("922e0213-e543-48ef-b8cb-92592afd5100");
+        UUID personUuid = PERSON_UUID_SECOND_IN_DB;
 
         // when
         PersonResponse response = personService.findById(personUuid);
@@ -41,7 +48,7 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfPersonResponseWhenFindAll() {
         // given
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
         // when
         Page<PersonResponse> response = personService.findAll(pageRequest);
@@ -54,8 +61,8 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfPersonsWhichLiveInHouse() {
         // given
-        UUID houseUuid = UUID.fromString("c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13");
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        UUID houseUuid = HOUSE_UUID_THIRD_IN_DB;
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 3;
 
         // when
@@ -68,8 +75,8 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfPersonsWhichSomeTimeLiveInHouse() {
         // given
-        UUID houseUuid = UUID.fromString("d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14");
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        UUID houseUuid = HOUSE_UUID_FOURTH_IN_DB;
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 2;
 
         // when
@@ -82,8 +89,8 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfPersonsWhichSomeTimeOwnHouse() {
         // given
-        UUID houseUuid = UUID.fromString("e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15");
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        UUID houseUuid = HOUSE_UUID_FIFTH_IN_DB;
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 3;
 
         // when
@@ -97,7 +104,7 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     void shouldReturnPageWithListOfPersonResponseFindWithFullTextSearch() {
         // given
         String searchTerm = "ре";
-        PageRequest pageRequest = PageRequest.of(0, 15);
+        PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
         int expectedSize = 1;
 
         // when
@@ -110,24 +117,7 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPersonResponseWhenSaveInDB() {
         // given
-        PersonRequest personToSave = PersonRequest.builder()
-                .name("Сергей")
-                .surname("Васильков")
-                .sex(Sex.MALE)
-                .passport(Passport.builder()
-                        .series("OP")
-                        .number("486259")
-                        .build())
-                .houseUUID(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"))
-                .ownedHouses(List.of(House.builder()
-                        .uuid(UUID.fromString("c8adac62-9266-486f-8540-21e976b635b3"))
-                        .area("Гомельская")
-                        .country("Республика Беларусь")
-                        .city("Наровля")
-                        .street("Лесная")
-                        .number(25)
-                        .build()))
-                .build();
+        PersonRequest personToSave = TestDataForPerson.getNewPersonForCreate();
 
         // when
         PersonResponse savedPerson = personService.save(personToSave);
@@ -144,25 +134,8 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnUpdatedPersonResponseWhenUpdateInDB() {
         // given
-        UUID personUuid = UUID.fromString("63a1faca-a963-4d4b-bfb9-2dafaedc36fe");
-        PersonRequest personToUpdate = PersonRequest.builder()
-                .name("Наташа")
-                .surname("Жарова")
-                .sex(Sex.FEMALE)
-                .passport(Passport.builder()
-                        .series("XC")
-                        .number("433259")
-                        .build())
-                .houseUUID(UUID.fromString("9724b9b8-216d-4ab9-92eb-e6e06029580d"))
-                .ownedHouses(List.of(House.builder()
-                        .uuid(UUID.fromString("0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6"))
-                        .area("Гомельская")
-                        .country("Беларусь")
-                        .city("Ельск")
-                        .street("Ленина")
-                        .number(2)
-                        .build()))
-                .build();
+        UUID personUuid = PERSON_UUID_NINTH_IN_DB;
+        PersonRequest personToUpdate = TestDataForPerson.getPersonForUpdate();
 
         // when
         PersonResponse updatedPerson = personService.update(personUuid, personToUpdate);
@@ -179,9 +152,9 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnUpdatedPersonResponseWhenPatchUpdateInDB() {
         // given
-        UUID personUuid = UUID.fromString("40291d40-5948-448c-b66a-d09591d3500f");
-        String name = "Евгений";
-        String surname = "Никитин";
+        UUID personUuid = PERSON_UUID_TENTH_IN_DB;
+        String name = UPDATE_PERSON_NAME;
+        String surname = UPDATE_PERSON_SURNAME;
         Map<String, Object> fields = new HashMap<>();
         fields.put("name", name);
         fields.put("surname", surname);
@@ -198,7 +171,7 @@ public class PersonServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldDeletePersonInDB() {
         // given
-        UUID personUuid = UUID.fromString("3df38f0a-09bb-4bbc-a80c-2f827b6f9d75");
+        UUID personUuid = PERSON_UUID_EIGHTH_IN_DB;
 
         // when
         personService.delete(personUuid);

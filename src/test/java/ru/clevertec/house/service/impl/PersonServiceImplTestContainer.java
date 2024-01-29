@@ -37,11 +37,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static util.initdata.ConstantsForHouse.HOUSE_UUID;
-import static util.initdata.ConstantsForHouse.INCORRECT_UUID;
-import static util.initdata.ConstantsForPerson.PERSON_UUID;
-import static util.initdata.ConstantsForPerson.UPDATE_PERSON_NAME;
-import static util.initdata.ConstantsForPerson.UPDATE_PERSON_SURNAME;
+import static util.initdata.TestDataForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.INCORRECT_UUID;
+import static util.initdata.TestDataForPerson.PERSON_UUID;
+import static util.initdata.TestDataForPerson.UPDATE_PERSON_NAME;
+import static util.initdata.TestDataForPerson.UPDATE_PERSON_SURNAME;
 
 @RequiredArgsConstructor
 public class PersonServiceImplTestContainer extends PostgresSqlContainerInitializer {

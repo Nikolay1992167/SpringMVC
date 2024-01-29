@@ -13,14 +13,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static util.initdata.ConstantsForHouse.HOUSE_AREA;
-import static util.initdata.ConstantsForHouse.HOUSE_CITY;
-import static util.initdata.ConstantsForHouse.HOUSE_COUNTRY;
-import static util.initdata.ConstantsForHouse.HOUSE_CREATE_DATE;
-import static util.initdata.ConstantsForHouse.HOUSE_ID;
-import static util.initdata.ConstantsForHouse.HOUSE_NUMBER;
-import static util.initdata.ConstantsForHouse.HOUSE_STREET;
-import static util.initdata.ConstantsForHouse.HOUSE_UUID;
+import static util.initdata.TestDataForHouse.HOUSE_AREA;
+import static util.initdata.TestDataForHouse.HOUSE_CITY;
+import static util.initdata.TestDataForHouse.HOUSE_COUNTRY;
+import static util.initdata.TestDataForHouse.HOUSE_CREATE_DATE;
+import static util.initdata.TestDataForHouse.HOUSE_ID;
+import static util.initdata.TestDataForHouse.HOUSE_NUMBER;
+import static util.initdata.TestDataForHouse.HOUSE_STREET;
+import static util.initdata.TestDataForHouse.HOUSE_UUID;
 
 @Data
 @Builder(setterPrefix = "with")
