@@ -18,6 +18,7 @@ import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.TypePerson;
+import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
 import ru.clevertec.house.repository.HouseRepository;
@@ -345,6 +346,38 @@ class PersonServiceImplTest {
         }
 
         @Test
+        void shouldReturnThrowIfPersonNotExistWithUUID() {
+            // given
+            UUID incorrectUUID = INCORRECT_UUID;
+            UUID houseUUID = HOUSE_UUID;
+
+            PersonRequest personRequest = PersonTestData.builder()
+                    .withName(UPDATE_PERSON_NAME)
+                    .withSurname(UPDATE_PERSON_SURNAME)
+                    .build()
+                    .getRequestDto();
+
+            Optional<House> houseInDB = HouseTestData.builder()
+                    .build()
+                    .getOptionalEntity();
+
+            when(houseRepository.findHouseByUuid(houseUUID))
+                    .thenReturn(houseInDB);
+            when(personRepository.findPersonByUuid(incorrectUUID))
+                    .thenReturn(Optional.empty());
+
+            // when, then
+            assertThrows(NotFoundException.class, () -> personService.update(incorrectUUID, personRequest));
+            verify(personRepository, times(1)).findPersonByUuid(incorrectUUID);
+            verify(personRepository, never()).save(any(Person.class));
+            verify(houseRepository, times(1)).findHouseByUuid(houseUUID);
+        }
+    }
+
+    @Nested
+    class PatchUpdate {
+
+        @Test
         void shouldReturnUpdatedPatchPersonResponseIfValidFields() {
             // given
             UUID personUuid = PERSON_UUID;
@@ -384,31 +417,28 @@ class PersonServiceImplTest {
         }
 
         @Test
-        void shouldReturnThrowIfPersonNotExistWithUUID() {
+        public void testReturnThrowIfIncorrectFields() {
             // given
-            UUID incorrectUUID = INCORRECT_UUID;
-            UUID houseUUID = HOUSE_UUID;
+            UUID uuid = PERSON_UUID;
 
-            PersonRequest personRequest = PersonTestData.builder()
-                    .withName(UPDATE_PERSON_NAME)
-                    .withSurname(UPDATE_PERSON_SURNAME)
-                    .build()
-                    .getRequestDto();
-
-            Optional<House> houseInDB = HouseTestData.builder()
-                    .build()
-                    .getOptionalEntity();
-
-            when(houseRepository.findHouseByUuid(houseUUID))
-                    .thenReturn(houseInDB);
-            when(personRepository.findPersonByUuid(incorrectUUID))
-                    .thenReturn(Optional.empty());
+            Map<String, Object> fields = null;
 
             // when, then
-            assertThrows(NotFoundException.class, () -> personService.update(incorrectUUID, personRequest));
-            verify(personRepository, times(1)).findPersonByUuid(incorrectUUID);
-            verify(personRepository, never()).save(any(Person.class));
-            verify(houseRepository, times(1)).findHouseByUuid(houseUUID);
+            assertThrows(CheckEmptyException.class, () -> personService.patchUpdate(uuid, fields));
+        }
+
+        @Test
+        public void testPatchUpdateWithNonExistentPerson() {
+            // given
+            UUID uuid = PERSON_UUID;
+
+            Map<String, Object> fields = new HashMap<>();
+            fields.put("name", "John");
+
+            when(personRepository.findPersonByUuid(uuid)).thenReturn(Optional.empty());
+
+            // when, then
+            assertThrows(NotFoundException.class, () -> personService.patchUpdate(uuid, fields));
         }
     }
 
