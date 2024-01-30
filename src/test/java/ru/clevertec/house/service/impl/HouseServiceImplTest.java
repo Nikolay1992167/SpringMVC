@@ -44,6 +44,7 @@ import static util.initdata.TestDataForHouse.HOUSE_UUID;
 import static util.initdata.TestDataForHouse.INCORRECT_UUID;
 import static util.initdata.TestDataForHouse.UPDATE_HOUSE_AREA;
 import static util.initdata.TestDataForHouse.UPDATE_HOUSE_CITY;
+import static util.initdata.TestDataForPerson.DEFAULT_PAGE_REQUEST_FOR_IT;
 import static util.initdata.TestDataForPerson.PERSON_UUID;
 
 @ServiceTest
@@ -122,7 +123,7 @@ class HouseServiceImplTest {
                     .thenReturn(page);
 
             // when
-            Page<HouseResponse> actual = houseService.findAll(PageRequest.of(0, 15));
+            Page<HouseResponse> actual = houseService.findAll(DEFAULT_PAGE_REQUEST_FOR_IT);
 
             // then
             assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
@@ -138,7 +139,7 @@ class HouseServiceImplTest {
                     .thenReturn(page);
 
             // when
-            Page<HouseResponse> actual = houseService.findAll(PageRequest.of(0, 15));
+            Page<HouseResponse> actual = houseService.findAll(DEFAULT_PAGE_REQUEST_FOR_IT);
 
             // then
             assertThat(actual).isEmpty();
@@ -151,7 +152,7 @@ class HouseServiceImplTest {
             int expectedSize = 1;
             UUID personUuid = PERSON_UUID;
             TypePerson typePerson = TypePerson.TENANT;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
@@ -176,7 +177,7 @@ class HouseServiceImplTest {
             // given
             int expectedSize = 1;
             UUID personUuid = PERSON_UUID;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
@@ -201,7 +202,7 @@ class HouseServiceImplTest {
             int expectedSize = 1;
             UUID personUuid = PERSON_UUID;
             TypePerson typePerson = TypePerson.OWNER;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
@@ -226,7 +227,7 @@ class HouseServiceImplTest {
             // given
             int expectedSize = 1;
             String searchTerm = "ин";
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()

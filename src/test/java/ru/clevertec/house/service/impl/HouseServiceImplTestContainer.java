@@ -43,6 +43,7 @@ import static util.initdata.TestDataForHouse.HOUSE_UUID_FOR_FIND;
 import static util.initdata.TestDataForHouse.INCORRECT_UUID;
 import static util.initdata.TestDataForHouse.UPDATE_HOUSE_AREA;
 import static util.initdata.TestDataForHouse.UPDATE_HOUSE_CITY;
+import static util.initdata.TestDataForPerson.DEFAULT_PAGE_REQUEST_FOR_IT;
 import static util.initdata.TestDataForPerson.PERSON_UUID;
 
 @RequiredArgsConstructor
@@ -117,7 +118,7 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
                     .thenReturn(page);
 
             // when
-            Page<HouseResponse> actual = houseService.findAll(PageRequest.of(0, 15));
+            Page<HouseResponse> actual = houseService.findAll(DEFAULT_PAGE_REQUEST_FOR_IT);
 
             // then
             assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
@@ -133,7 +134,7 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
                     .thenReturn(page);
 
             // when
-            Page<HouseResponse> actual = houseService.findAll(PageRequest.of(0, 15));
+            Page<HouseResponse> actual = houseService.findAll(DEFAULT_PAGE_REQUEST_FOR_IT);
 
             // then
             assertThat(actual).isEmpty();
@@ -146,7 +147,7 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
             int expectedSize = 1;
             UUID personUuid = PERSON_UUID;
             TypePerson typePerson = TypePerson.TENANT;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
@@ -171,7 +172,7 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
             // given
             int expectedSize = 1;
             UUID personUuid = PERSON_UUID;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
@@ -196,7 +197,7 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
             int expectedSize = 1;
             UUID personUuid = PERSON_UUID;
             TypePerson typePerson = TypePerson.OWNER;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()
@@ -221,7 +222,7 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
             // given
             int expectedSize = 1;
             String searchTerm = "ин";
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<House> houseList = List.of(HouseTestData.builder()
                     .build()

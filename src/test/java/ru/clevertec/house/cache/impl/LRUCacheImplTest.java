@@ -3,8 +3,7 @@ package ru.clevertec.house.cache.impl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LRUCacheImplTest {
 
@@ -17,24 +16,39 @@ class LRUCacheImplTest {
 
     @Test
     public void testPutAndGet() {
-        lruCache.put(1, "One");
-        assertEquals("One", lruCache.get(1));
+        // given
+        String expected = "One";
+        lruCache.put(1, expected);
+
+        // when
+        String actual = lruCache.get(1);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     public void testRemove() {
-        lruCache.put(2, "Two");
-        assertEquals("Two", lruCache.get(2));
+        // given
+        String expected = "Two";
+        lruCache.put(2, expected);
+
+        // when
         lruCache.remove(2);
-        assertNull(lruCache.get(2));
+
+        // then
+        assertThat(lruCache.get(2)).isNull();
     }
 
     @Test
     public void testEvict() {
+        // given, when
         lruCache.put(1, "One");
         lruCache.put(2, "Two");
         lruCache.put(3, "Three");
         lruCache.put(4, "Four");
-        assertNull(lruCache.get(1));
+
+        // then
+        assertThat(lruCache.get(1)).isNull();
     }
 }

@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class LFUCacheImplTest {
@@ -15,30 +14,52 @@ class LFUCacheImplTest {
 
     @Test
     public void testPut() {
-        lfuCache.put(1, "One");
-        assertEquals("One", lfuCache.get(1));
+        // given
+        String expected = "One";
+        lfuCache.put(1, expected);
+
+        // when
+        String actual = lfuCache.get(1);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     public void testGet() {
-        lfuCache.put(2, "Two");
-        assertEquals("Two", lfuCache.get(2));
-        assertNull(lfuCache.get(3));
+        // given
+        String expected = "Two";
+        lfuCache.put(2, expected);
+
+        // when
+        String actual = lfuCache.get(2);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+        assertThat(lfuCache.get(3)).isNull();
     }
 
     @Test
     public void testRemove() {
-        lfuCache.put(3, "Three");
-        assertEquals("Three", lfuCache.get(3));
+        // given
+        String value = "Three";
+        lfuCache.put(3, value);
+
+        // when
         lfuCache.remove(3);
-        assertNull(lfuCache.get(3));
+
+        // then
+        assertThat(lfuCache.get(3)).isNull();
     }
 
     @Test
     public void testEvict() {
+        // given, when
         for (int i = 0; i < 10; i++) {
             lfuCache.put(i, "Value" + i);
         }
-        assertNull(lfuCache.get(2));
+
+        // then
+        assertThat(lfuCache.get(2)).isNull();
     }
 }

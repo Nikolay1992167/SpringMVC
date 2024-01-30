@@ -152,6 +152,7 @@ class PersonControllerTest {
             when(personService.findAll(pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "?page=0&size=2"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -214,6 +215,7 @@ class PersonControllerTest {
             when(personService.findPersonsWhichLiveInHouse(houseUuid, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/lives/" + houseUuid + "?page=0&size=2"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -277,6 +279,7 @@ class PersonControllerTest {
             when(personService.findPersonsWhichSomeTimeLiveInHouse(houseUuid, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/sometimelives/" + houseUuid + "?page=0&size=3"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -340,6 +343,7 @@ class PersonControllerTest {
             when(personService.findPersonsWhichSomeTimeOwnHouse(houseUuid, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/sometimeownes/" + houseUuid + "?page=0&size=4"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -403,6 +407,7 @@ class PersonControllerTest {
             when(personService.findPersonsFullTextSearch(searchTerm, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/fullsearch/" + searchTerm + "?page=0&size=3"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());

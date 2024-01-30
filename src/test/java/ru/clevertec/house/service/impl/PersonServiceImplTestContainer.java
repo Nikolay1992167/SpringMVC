@@ -39,6 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static util.initdata.TestDataForHouse.HOUSE_UUID;
 import static util.initdata.TestDataForHouse.INCORRECT_UUID;
+import static util.initdata.TestDataForPerson.DEFAULT_PAGE_REQUEST_FOR_IT;
 import static util.initdata.TestDataForPerson.PERSON_UUID;
 import static util.initdata.TestDataForPerson.UPDATE_PERSON_NAME;
 import static util.initdata.TestDataForPerson.UPDATE_PERSON_SURNAME;
@@ -116,7 +117,7 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
                     .thenReturn(page);
 
             // when
-            Page<PersonResponse> actual = personService.findAll(PageRequest.of(0, 15));
+            Page<PersonResponse> actual = personService.findAll(DEFAULT_PAGE_REQUEST_FOR_IT);
 
             // then
             assertThat(actual.getTotalElements()).isEqualTo(expectedSize);
@@ -132,7 +133,7 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
                     .thenReturn(page);
 
             // when
-            Page<PersonResponse> actual = personService.findAll(PageRequest.of(0, 15));
+            Page<PersonResponse> actual = personService.findAll(DEFAULT_PAGE_REQUEST_FOR_IT);
 
             // then
             assertThat(actual).isEmpty();
@@ -143,7 +144,7 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
             // given
             int expectedSize = 1;
             UUID houseUuid = HOUSE_UUID;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
             List<Person> personList = List.of(PersonTestData.builder()
                     .build()
                     .getEntity());
@@ -167,7 +168,7 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
             int expectedSize = 1;
             UUID houseUuid = HOUSE_UUID;
             TypePerson typePerson = TypePerson.TENANT;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<Person> personList = List.of(PersonTestData.builder()
                     .build()
@@ -192,7 +193,7 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
             int expectedSize = 1;
             UUID houseUuid = HOUSE_UUID;
             TypePerson typePerson = TypePerson.OWNER;
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<Person> personList = List.of(PersonTestData.builder()
                     .build()
@@ -216,7 +217,7 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
             // given
             int expectedSize = 1;
             String searchTerm = "ро";
-            PageRequest pageRequest = PageRequest.of(0, 15);
+            PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
 
             List<Person> personList = List.of(PersonTestData.builder()
                     .build()

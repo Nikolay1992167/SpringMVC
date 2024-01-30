@@ -151,6 +151,7 @@ class HouseControllerTest {
             when(houseService.findAll(pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "?page=0&size=2"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -213,6 +214,7 @@ class HouseControllerTest {
             when(houseService.findHousesWhichSomeTimeLivesPerson(personUuid, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/sometimelives/" + personUuid + "?page=0&size=3"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -275,6 +277,7 @@ class HouseControllerTest {
             when(houseService.findHousesWhichOwnPerson(personUuid, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/owns/" + personUuid + "?page=0&size=4"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -337,6 +340,7 @@ class HouseControllerTest {
             when(houseService.findHousesWhichSomeTimeOwnPerson(personUuid, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/sometimeowns/" + personUuid + "?page=0&size=3"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
@@ -400,6 +404,7 @@ class HouseControllerTest {
             when(houseService.findHousesFullTextSearch(searchTerm, pageRequest))
                     .thenReturn(page);
 
+            // when, then
             mockMvc.perform(get(URL + "/fullsearch/" + searchTerm + "?page=0&size=3"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isEmpty());
