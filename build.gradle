@@ -1,17 +1,49 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.2.1'
+    id "io.spring.dependency-management" version "1.1.4"
+    id "io.freefair.lombok" version "8.4"
+    id 'war'
 }
 
 group = 'by.clevertec'
 version = '1.0-SNAPSHOT'
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+    implementation 'org.liquibase:liquibase-core:4.25.1'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
+
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+    implementation 'org.postgresql:postgresql:42.6.0'
+
+    testImplementation 'org.testcontainers:postgresql:1.19.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.8.0'
 }
 
 test {
