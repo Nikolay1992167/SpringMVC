@@ -3,16 +3,21 @@
 * За основу взят проект разработан на основе Spring Boot Framework. 
 * Согласно условиям задания в проекте:
 * 1) Покрытие тестами обеспечено на 83% согласно Coverage.
-* 2) Для тестирования используется тестконтейнер.
+* 2) Для тестирования используется тестконтейнер. Использую PostgreSQLContainer.
 * 3) Применён mockMvc.
 * Реализованы тесты:
 * 1) Для LFUCacheImpl и LRUCacheImpl.
-* 2) 
+* 2) Для HouseController и PersonController модульные тесты с использованием mockMvc. 
+* 3) Для ControllerAdvice модульные тесты.
+* 4) Для HouseRepository и PersonRepository интеграционные тесты с использованием тестконтейнера.
+* 5) Для уровня сервисов написаны модульные тесты: HouseServiceImplTest и PersonServiceImplTest,
+* интеграционные тесты: HouseServiceImplIT и PersonServiceImplIT, реализованы наверное модульные тесты с использованием 
+* @MockBean репозиториев и подключением тест контейнеров, пока верю слову ментора, что в определённых ситуациях они
+* нужны и их реализовал HouseServiceImplTestContainer и PersonServiceImplTestContainer.
 * Вы можете запустить тесты для этого проекта, выполнив в корне проекта:
 ```
 ./gradlew test
 ```
-
 
 ### Технологии применённые в проекте
 
