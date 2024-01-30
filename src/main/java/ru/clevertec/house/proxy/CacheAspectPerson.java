@@ -1,27 +1,22 @@
 package ru.clevertec.house.proxy;
 
-import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import ru.clevertec.house.cache.Cache;
 import ru.clevertec.house.cache.factory.CacheFactory;
-import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
-import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.exception.NotFoundException;
-import ru.clevertec.house.mapper.HouseMapper;
 import ru.clevertec.house.mapper.PersonMapper;
-import ru.clevertec.house.repository.HouseRepository;
 import ru.clevertec.house.repository.PersonRepository;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,6 +66,13 @@ public class CacheAspectPerson {
 
     @AfterReturning(pointcut = "@annotation(ru.clevertec.house.proxy.Cache) && execution(* ru.clevertec.house.service.impl.PersonServiceImpl.update(..)) && args(uuid, personRequest)", argNames = "uuid, personRequest")
     public void cacheUpdate(UUID uuid, PersonRequest personRequest) {
+
+        Person person = personRepository.findPersonByUuid(uuid).orElseThrow(() -> NotFoundException.of(Person.class, uuid));
+        cache.put(uuid, personMapper.toResponse(person));
+    }
+
+    @AfterReturning(pointcut = "@annotation(ru.clevertec.house.proxy.Cache) && execution(* ru.clevertec.house.service.impl.PersonServiceImpl.patchUpdate(..)) && args(uuid, fields)", argNames = "uuid, fields")
+    public void cachePatchUpdate(UUID uuid, Map<String, Object> fields) {
 
         Person person = personRepository.findPersonByUuid(uuid).orElseThrow(() -> NotFoundException.of(Person.class, uuid));
         cache.put(uuid, personMapper.toResponse(person));

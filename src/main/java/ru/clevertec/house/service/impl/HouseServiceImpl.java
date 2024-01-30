@@ -212,6 +212,7 @@ public class HouseServiceImpl implements HouseService {
      * @return the updated {@link HouseResponse} which was mapped from House entity.
      * @throws NotFoundException if House is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     @Transactional
     public HouseResponse patchUpdate(UUID uuid, Map<String, Object> fields) {

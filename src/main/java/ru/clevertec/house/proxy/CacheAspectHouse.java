@@ -16,6 +16,7 @@ import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
 import ru.clevertec.house.repository.HouseRepository;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ import java.util.UUID;
 @Component
 @ConditionalOnBean(CacheFactory.class)
 public class CacheAspectHouse {
+
     private final Cache<Object, Object> cache;
 
     private final HouseRepository houseRepository;
@@ -64,6 +66,13 @@ public class CacheAspectHouse {
 
     @AfterReturning(pointcut = "@annotation(ru.clevertec.house.proxy.Cache) && execution(* ru.clevertec.house.service.impl.HouseServiceImpl.update(..)) && args(uuid, houseRequest)", argNames = "uuid, houseRequest")
     public void cacheUpdate(UUID uuid, HouseRequest houseRequest) {
+
+        House house = houseRepository.findHouseByUuid(uuid).orElseThrow(() -> NotFoundException.of(House.class, uuid));
+        cache.put(uuid, houseMapper.toResponse(house));
+    }
+
+    @AfterReturning(pointcut = "@annotation(ru.clevertec.house.proxy.Cache) && execution(* ru.clevertec.house.service.impl.HouseServiceImpl.patchUpdate(..)) && args(uuid, fields)", argNames = "uuid, fields")
+    public void cachePatchUpdate(UUID uuid, Map<String, Object> fields) {
 
         House house = houseRepository.findHouseByUuid(uuid).orElseThrow(() -> NotFoundException.of(House.class, uuid));
         cache.put(uuid, houseMapper.toResponse(house));

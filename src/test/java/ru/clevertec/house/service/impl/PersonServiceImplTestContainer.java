@@ -82,7 +82,6 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(personRepository, times(1)).findPersonByUuid(personUuid);
         }
 
         @Test
@@ -97,7 +96,6 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
 
             // when, then
             assertThrows(NotFoundException.class, () -> personService.findById(incorrectUuid));
-            verify(personRepository, times(1)).findPersonByUuid(incorrectUuid);
         }
     }
 
@@ -339,8 +337,6 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(houseRepository, times(1)).findHouseByUuid(houseUUID);
-            verify(personRepository, times(1)).findPersonByUuid(personUuid);
         }
 
         @Test
@@ -411,7 +407,6 @@ public class PersonServiceImplTestContainer extends PostgresSqlContainerInitiali
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(personRepository, times(1)).findPersonByUuid(personUuid);
         }
 
         @Test

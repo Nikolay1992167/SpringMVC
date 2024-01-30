@@ -17,6 +17,7 @@ import ru.clevertec.house.enums.TypePerson;
 import ru.clevertec.house.exception.CheckEmptyException;
 import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
+import ru.clevertec.house.proxy.Cache;
 import ru.clevertec.house.repository.HouseRepository;
 import ru.clevertec.house.repository.PersonRepository;
 import ru.clevertec.house.service.PersonService;
@@ -51,6 +52,7 @@ public class PersonServiceImpl implements PersonService {
      * @return PersonResponse with the specified UUID and mapped from Person entity.
      * @throws NotFoundException if Person is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     public PersonResponse findById(UUID uuid) {
 
@@ -167,6 +169,7 @@ public class PersonServiceImpl implements PersonService {
      *                      and saved in database by dao.
      * @return the saved {@link PersonResponse} which was mapped from Person entity.
      */
+    @Cache
     @Override
     @Transactional
     public PersonResponse save(PersonRequest personRequest) {
@@ -219,6 +222,7 @@ public class PersonServiceImpl implements PersonService {
      * @return the updated {@link PersonResponse} which was mapped from Person entity.
      * @throws NotFoundException if Person is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     @Transactional
     public PersonResponse update(UUID uuid, PersonRequest personRequest) {
@@ -250,6 +254,7 @@ public class PersonServiceImpl implements PersonService {
      * @return the updated {@link PersonResponse} which was mapped from Person entity.
      * @throws NotFoundException if Person is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     @Transactional
     public PersonResponse patchUpdate(UUID uuid, Map<String, Object> fields) {
@@ -295,6 +300,7 @@ public class PersonServiceImpl implements PersonService {
      * @param uuid the field of the Person.
      * @throws NotFoundException if Person is not exists by finding it by UUID.
      */
+    @Cache
     @Override
     @Transactional
     public void delete(UUID uuid) {

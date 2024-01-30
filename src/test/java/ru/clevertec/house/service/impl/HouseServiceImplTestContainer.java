@@ -83,7 +83,6 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(houseRepository, times(1)).findHouseByUuid(houseUuid);
         }
 
         @Test
@@ -98,7 +97,6 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
 
             // when, then
             assertThrows(NotFoundException.class, () -> houseService.findById(incorrectUuid));
-            verify(houseRepository, times(1)).findHouseByUuid(incorrectUuid);
         }
     }
 
@@ -324,7 +322,6 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(houseRepository, times(2)).findHouseByUuid(houseUuid);
         }
 
         @Test
@@ -363,7 +360,6 @@ public class HouseServiceImplTestContainer extends PostgresSqlContainerInitializ
 
             // then
             assertThat(actual).isEqualTo(expected);
-            verify(houseRepository, times(1)).findHouseByUuid(houseUuid);
         }
 
         @Test

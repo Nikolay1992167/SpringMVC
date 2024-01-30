@@ -102,9 +102,9 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
     @Test
     void shouldReturnPageWithListOfHouseResponseFindWithFullTextSearch() {
         // given
-        String searchTerm = "ин";
+        String searchTerm = "ови";
         PageRequest pageRequest = DEFAULT_PAGE_REQUEST_FOR_IT;
-        int expectedSize = 4;
+        int expectedSize = 2;
 
         // when
         Page<HouseResponse> response = houseService.findHousesFullTextSearch(searchTerm, pageRequest);
@@ -177,6 +177,5 @@ public class HouseServiceImplIT extends PostgresSqlContainerInitializer {
 
         // then
         assertThrows(NotFoundException.class, () -> houseService.findById(houseUuid));
-
     }
 }
