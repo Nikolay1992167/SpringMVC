@@ -25,6 +25,13 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
     @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     Optional<Person> findPersonByUuid(UUID uuid);
 
+    /**
+     * Finds all {@link Person} entity.
+     *
+     * @param pageable the {@link Pageable} which will be parameters for pagination.
+     * @return a list of the Person entity, or an empty if
+     * no such entity exists in the database.
+     */
     @Override
     @EntityGraph(attributePaths = {"house"})
     Page<Person> findAll(Pageable pageable);
