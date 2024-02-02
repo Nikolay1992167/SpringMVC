@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.clevertec.house.entity.Person;
@@ -25,6 +26,10 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
     @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     Optional<Person> findPersonByUuid(UUID uuid);
 
+    @Override
+    @EntityGraph(attributePaths = {"house"})
+    Page<Person> findAll(Pageable pageable);
+
     /**
      * Finds all {@link Person} entity by House's UUID, in which lives a Person.
      *
@@ -33,6 +38,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
      */
+    @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     Page<Person> findAllByHouseUuid(UUID houseId, Pageable pageable);
 
     /**
@@ -44,6 +50,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
      */
+    @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     Page<Person> findByPersonHouseHistoriesHouseUuidAndPersonHouseHistoriesType(UUID uuid, TypePerson type, Pageable pageable);
 
     /**
@@ -55,7 +62,8 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * no such entity exists in the database.
      */
     @Query("""
-            SELECT p FROM Person p
+            SELECT DISTINCT p FROM Person p
+            JOIN FETCH p.house
             WHERE (:searchTerm IS NULL OR CONCAT(p.name, ' ', p.surname)
             LIKE %:searchTerm%)
             """)
@@ -66,6 +74,5 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      *
      * @param uuid the UUID of the Person entity.
      */
-    @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     void deletePersonByUuid(UUID uuid);
 }
