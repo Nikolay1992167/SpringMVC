@@ -1,2 +1,3 @@
 rootProject.name = 'SpringMvc'
+include 'spring-boot-logging-starter'
 
