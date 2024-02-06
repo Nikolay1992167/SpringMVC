@@ -1,0 +1,26 @@
+#SPRING CONFIGURATION
+spring:
+  profiles:
+    active: dev
+  application:
+    name: HouseService
+  cache:
+    capacity: 5
+    algorithm: LFUCache
+  liquibase:
+    change-log: classpath:db.changelog/db.changelog-master.yml
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+#SERVER
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
