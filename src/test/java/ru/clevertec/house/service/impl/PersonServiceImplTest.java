@@ -1,5 +1,7 @@
 package ru.clevertec.house.service.impl;
 
+import by.clevertec.exception.CheckEmptyException;
+import by.clevertec.exception.NotFoundException;
 import config.ServiceTest;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +20,6 @@ import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.entity.Person;
 import ru.clevertec.house.enums.TypePerson;
-import ru.clevertec.house.exception.CheckEmptyException;
-import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
 import ru.clevertec.house.repository.HouseRepository;
 import ru.clevertec.house.repository.PersonRepository;

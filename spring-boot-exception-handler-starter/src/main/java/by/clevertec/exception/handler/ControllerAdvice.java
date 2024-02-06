@@ -1,18 +1,16 @@
-package ru.clevertec.house.exception.handler;
+package by.clevertec.exception.handler;
 
-import lombok.RequiredArgsConstructor;
+import by.clevertec.exception.CheckEmptyException;
+import by.clevertec.exception.HouseNotEmptyException;
+import by.clevertec.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.clevertec.house.exception.CheckEmptyException;
-import ru.clevertec.house.exception.HouseNotEmptyException;
-import ru.clevertec.house.exception.NotFoundException;
 
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class ControllerAdvice {
 
     /**

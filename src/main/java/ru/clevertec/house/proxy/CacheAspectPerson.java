@@ -1,5 +1,6 @@
 package ru.clevertec.house.proxy;
 
+import by.clevertec.exception.NotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
@@ -12,7 +13,6 @@ import ru.clevertec.house.cache.factory.CacheFactory;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
 import ru.clevertec.house.entity.Person;
-import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.PersonMapper;
 import ru.clevertec.house.repository.PersonRepository;
 

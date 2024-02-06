@@ -1,5 +1,8 @@
 package ru.clevertec.house.service.impl;
 
+import by.clevertec.exception.CheckEmptyException;
+import by.clevertec.exception.HouseNotEmptyException;
+import by.clevertec.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -12,9 +15,6 @@ import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
 import ru.clevertec.house.entity.House;
 import ru.clevertec.house.enums.TypePerson;
-import ru.clevertec.house.exception.CheckEmptyException;
-import ru.clevertec.house.exception.HouseNotEmptyException;
-import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.mapper.HouseMapper;
 import ru.clevertec.house.proxy.Cache;
 import ru.clevertec.house.repository.HouseRepository;

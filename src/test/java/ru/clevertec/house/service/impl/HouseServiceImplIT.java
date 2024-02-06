@@ -1,12 +1,12 @@
 package ru.clevertec.house.service.impl;
 
+import by.clevertec.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
-import ru.clevertec.house.exception.NotFoundException;
 import util.PostgresSqlContainerInitializer;
 import util.initdata.TestDataForHouse;
 

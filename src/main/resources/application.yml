@@ -21,6 +21,9 @@ spring:
 aop:
   logging:
     enabled: true
+exception:
+  handler:
+    enabled: true
 #SERVER
 server:
   port: 8080

@@ -1,5 +1,6 @@
 package ru.clevertec.house.controller.api;
 
+import by.clevertec.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
-import ru.clevertec.house.exception.NotFoundException;
 
 import java.util.Map;
 import java.util.UUID;

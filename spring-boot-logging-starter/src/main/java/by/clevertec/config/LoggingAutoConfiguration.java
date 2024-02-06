@@ -11,9 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(LoggingProperties.class)
-@ConditionalOnClass(LoggingProperties.class)
-@ConditionalOnProperty(prefix = "aop.logging", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "aop.logging", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LoggingAutoConfiguration {
 
     /**

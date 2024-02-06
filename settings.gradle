@@ -1,3 +1,4 @@
 rootProject.name = 'SpringMvc'
 include 'spring-boot-logging-starter'
+include 'spring-boot-exception-handler-starter'
 

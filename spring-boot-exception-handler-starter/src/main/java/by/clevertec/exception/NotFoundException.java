@@ -1,4 +1,4 @@
-package ru.clevertec.house.exception;
+package by.clevertec.exception;
 
 public class NotFoundException extends RuntimeException {
 

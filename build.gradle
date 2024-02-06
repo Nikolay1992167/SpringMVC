@@ -20,7 +20,9 @@ repositories {
 
 dependencies {
 
+    implementation 'by.clevertec:spring-boot-exception-handler-starter:1.0'
     implementation 'by.clevertec:spring-boot-logging-starter:1.0'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -30,7 +32,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-    implementation project(path: ':spring-boot-logging-starter')
+    testImplementation project(path: ':spring-boot-exception-handler-starter')
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
     implementation 'org.postgresql:postgresql:42.6.0'
 
