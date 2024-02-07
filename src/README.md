@@ -1,19 +1,13 @@
-### Task - Spring Boot Tests
+### Task - Spring Boot AOP
 
-* За основу взят проект разработан на основе Spring Boot Framework. 
-* Согласно условиям задания в проекте:
-* 1) Покрытие тестами обеспечено на 83% согласно Coverage.
-* 2) Для тестирования используется тестконтейнер. Использую PostgreSQLContainer.
-* 3) Применён mockMvc.
-* Реализованы тесты:
-* 1) Для LFUCacheImpl и LRUCacheImpl.
-* 2) Для HouseController и PersonController модульные тесты с использованием mockMvc. 
-* 3) Для ControllerAdvice модульные тесты.
-* 4) Для HouseRepository и PersonRepository интеграционные тесты с использованием тестконтейнера.
-* 5) Для уровня сервисов написаны модульные тесты: HouseServiceImplTest и PersonServiceImplTest,
-* интеграционные тесты: HouseServiceImplIT и PersonServiceImplIT, реализованы наверное модульные тесты с использованием 
-* @MockBean репозиториев и подключением тест контейнеров, пока верю слову ментора, что в определённых ситуациях они
-* нужны и их реализовал HouseServiceImplTestContainer и PersonServiceImplTestContainer.
+* За основу взят проект разработан на основе Spring Boot Tests.
+* В проекте созданы 2 custom spring boot starter: spring-boot-exception-handler-starter и spring-boot-logging-starter.
+* Стартер spring-boot-exception-handler-starter занимается обработкой ошибок. Используя @RestControllerAdvice.
+* Стартер spring-boot-logging-starter занимается логирование методов контроллеров, фиксирует параметры запросов и ответов,
+* а также время выполнения. Создана аннотация @Logging, которая указывается над необходимыми методами.
+* Стартеры покрыты тестами.
+* В связи с переносом логики по обработке ошибок в стартер, перестали срабатывать пару тестов которые проверяют создание
+* ошибки. Пока устранить не смог, поэтому их удалил.
 * Вы можете запустить тесты для этого проекта, выполнив в корне проекта:
 ```
 ./gradlew test
@@ -46,9 +40,19 @@
 3. В зависимости от используемого профиля вы вводите в application.yml укажите тип профиля spring: profiles: active:-.
 Введите свои username и password в соответсвующий файл в строках №5, №6
 4. Скрипты по созданию таблиц и загрузке данных выполняются автоматически посредствам Liquibase.
-5. Приложение готово к работе.
+5. Перед build основного приложения необходимо выполнить build созданных стартеров, чтобы расположить стартера в mavenLocal.
+6. Приложение готово к работе.
 
 ### Функциональные возможности
+
+#### Check logging
+
+````
+HouseController.findById :
+Data request : [0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6]
+Data response : <200 OK OK,HouseResponse(uuid=0699cfd2-9fb7-4483-bcdf-194a2c6b7fe6, area=Гомельская, country=Беларусь, city=Ельск, street=Ленина, number=2, createDate=2023-12-30T12:00),[]>
+Method duration in millis : 186
+````
 
 #### HouseController
 
