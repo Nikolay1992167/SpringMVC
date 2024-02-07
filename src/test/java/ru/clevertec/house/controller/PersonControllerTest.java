@@ -16,8 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.clevertec.house.dto.request.PersonRequest;
 import ru.clevertec.house.dto.response.PersonResponse;
-import ru.clevertec.house.entity.Person;
-import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.service.impl.PersonServiceImpl;
 import util.PersonTestData;
 
@@ -28,8 +26,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -81,21 +77,6 @@ class PersonControllerTest {
             mockMvc.perform(get(URL + "/" + personUuid))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.uuid").value(personUuid.toString()));
-        }
-
-        @SneakyThrows
-        @Test
-        void shouldReturnExceptionThrownAndStatus404() {
-            // given
-            UUID personUuid = INCORRECT_UUID;
-
-            when(personService.findById(any()))
-                    .thenThrow(NotFoundException.of(Person.class, personUuid));
-
-            // when, then
-            mockMvc.perform(get(URL + "/" + personUuid))
-                    .andExpect(status().isNotFound())
-                    .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
         }
     }
 

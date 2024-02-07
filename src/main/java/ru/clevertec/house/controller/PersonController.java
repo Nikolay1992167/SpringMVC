@@ -1,5 +1,6 @@
 package ru.clevertec.house.controller;
 
+import by.clevertec.annotation.Logging;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import ru.clevertec.house.service.PersonService;
 import java.util.Map;
 import java.util.UUID;
 
+@Logging
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/persons")

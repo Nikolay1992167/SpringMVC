@@ -1,5 +1,10 @@
 package ru.clevertec.house.exception.handler;
 
+import by.clevertec.exception.CheckEmptyException;
+import by.clevertec.exception.HouseNotEmptyException;
+import by.clevertec.exception.NotFoundException;
+import by.clevertec.exception.handler.ControllerAdvice;
+import by.clevertec.exception.handler.IncorrectData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,9 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.clevertec.house.entity.Person;
-import ru.clevertec.house.exception.CheckEmptyException;
-import ru.clevertec.house.exception.HouseNotEmptyException;
-import ru.clevertec.house.exception.NotFoundException;
 
 import java.util.Objects;
 import java.util.UUID;

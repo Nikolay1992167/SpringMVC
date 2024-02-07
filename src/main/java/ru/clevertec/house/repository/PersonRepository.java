@@ -26,6 +26,17 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
     Optional<Person> findPersonByUuid(UUID uuid);
 
     /**
+     * Finds all {@link Person} entity.
+     *
+     * @param pageable the {@link Pageable} which will be parameters for pagination.
+     * @return a list of the Person entity, or an empty if
+     * no such entity exists in the database.
+     */
+    @Override
+    @EntityGraph(attributePaths = {"house"})
+    Page<Person> findAll(Pageable pageable);
+
+    /**
      * Finds all {@link Person} entity by House's UUID, in which lives a Person.
      *
      * @param houseId  the UUID of the House entity.
@@ -33,6 +44,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
      */
+    @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     Page<Person> findAllByHouseUuid(UUID houseId, Pageable pageable);
 
     /**
@@ -44,6 +56,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * @return a list of the Person entity, or an empty if
      * no such entity exists in the database.
      */
+    @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     Page<Person> findByPersonHouseHistoriesHouseUuidAndPersonHouseHistoriesType(UUID uuid, TypePerson type, Pageable pageable);
 
     /**
@@ -55,7 +68,8 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      * no such entity exists in the database.
      */
     @Query("""
-            SELECT p FROM Person p
+            SELECT DISTINCT p FROM Person p
+            JOIN FETCH p.house
             WHERE (:searchTerm IS NULL OR CONCAT(p.name, ' ', p.surname)
             LIKE %:searchTerm%)
             """)
@@ -66,6 +80,5 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
      *
      * @param uuid the UUID of the Person entity.
      */
-    @EntityGraph(attributePaths = {"house", "personHouseHistories", "ownedHouses"})
     void deletePersonByUuid(UUID uuid);
 }

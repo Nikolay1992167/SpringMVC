@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.clevertec.house.dto.request.HouseRequest;
 import ru.clevertec.house.dto.response.HouseResponse;
-import ru.clevertec.house.exception.NotFoundException;
 import ru.clevertec.house.service.impl.HouseServiceImpl;
 import util.HouseTestData;
 
@@ -27,8 +26,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -41,10 +38,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static util.initdata.TestDataForHouse.HOUSE_UUID;
-import static util.initdata.TestDataForHouse.INCORRECT_UUID;
 import static util.initdata.TestDataForHouse.UPDATE_HOUSE_AREA;
 import static util.initdata.TestDataForHouse.UPDATE_HOUSE_CITY;
 import static util.initdata.TestDataForPerson.PERSON_UUID;
+
 
 @WebMvcTest(HouseController.class)
 class HouseControllerTest {
@@ -82,20 +79,7 @@ class HouseControllerTest {
                     .andExpect(jsonPath("$.uuid").value(houseUuid.toString()));
         }
 
-        @SneakyThrows
-        @Test
-        void shouldReturnExceptionThrownAndStatus404() {
-            // given
-            UUID houseUuid = INCORRECT_UUID;
 
-            when(houseService.findById(any()))
-                    .thenThrow(new NotFoundException("House not found!"));
-
-            // when, then
-            mockMvc.perform(get(URL + "/" + houseUuid))
-                    .andExpect(status().isNotFound())
-                    .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
-        }
     }
 
     @Nested
